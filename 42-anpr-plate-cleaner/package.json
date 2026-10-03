@@ -1,20 +1,29 @@
 {
-  "name": "anpr-plate-cleaner",
+  "name": "@llein/anpr-plate-cleaner",
   "version": "1.0.0",
-  "description": "Post-processing text cleaner for License Plate OCR (ANPR) resolving character confusions like 0 vs O, 1 vs I, 8 vs B based on position rules.",
-  "main": "./dist/index.cjs",
+  "description": "Production-grade OCR/ANPR license plate text cleaner, character confusion disambiguation (0/O, 1/I, 8/B), 2-line combiner, and fuzzy matcher.",
+  "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs"
+      "require": "./dist/index.js"
     }
   },
   "files": [
     "dist"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Llein-Dev/viet-dev-toolkit.git",
+    "directory": "42-anpr-plate-cleaner"
+  },
+  "homepage": "https://github.com/Llein-Dev/viet-dev-toolkit#readme",
+  "bugs": {
+    "url": "https://github.com/Llein-Dev/viet-dev-toolkit/issues"
+  },
   "scripts": {
     "build": "tsup src/index.ts --format cjs,esm --dts --clean",
     "dev": "tsup src/index.ts --format cjs,esm --watch --dts",
@@ -29,10 +38,13 @@
     "alpr",
     "ocr",
     "license-plate",
+    "vietnam",
     "post-processing",
-    "cleaner"
+    "cleaner",
+    "fuzzy-matching",
+    "computer-vision"
   ],
-  "author": "",
+  "author": "llein",
   "license": "MIT",
   "devDependencies": {
     "tsup": "^8.3.5",

@@ -1,20 +1,29 @@
 {
-  "name": "vn-plate-format",
+  "name": "@llein/vn-plate-format",
   "version": "1.0.0",
   "description": "Format, standardize and parse Vietnam vehicle license plates according to Circular 24/2023/TT-BCA.",
-  "main": "./dist/index.cjs",
+  "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs"
+      "require": "./dist/index.js"
     }
   },
   "files": [
     "dist"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Llein-Dev/viet-dev-toolkit.git",
+    "directory": "03-vn-plate-format"
+  },
+  "homepage": "https://github.com/Llein-Dev/viet-dev-toolkit#readme",
+  "bugs": {
+    "url": "https://github.com/Llein-Dev/viet-dev-toolkit/issues"
+  },
   "scripts": {
     "build": "tsup src/index.ts --format cjs,esm --dts --clean",
     "dev": "tsup src/index.ts --format cjs,esm --watch --dts",
@@ -31,7 +40,7 @@
     "bien-so-xe",
     "circular-24-2023"
   ],
-  "author": "",
+  "author": "llein",
   "license": "MIT",
   "devDependencies": {
     "tsup": "^8.3.5",

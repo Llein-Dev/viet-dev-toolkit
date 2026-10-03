@@ -17,6 +17,7 @@ Trải nghiệm trực quan ngay trên trình duyệt không cần cài đặt:
 - **Tab 1:** CCCD / VNeID 12 số & Chip QR Code Parser
 - **Tab 2:** VietQR NAPAS247 Generator (54+ Ngân hàng Việt Nam)
 - **Tab 3:** Đọc số tiền thành chữ hóa đơn (Hỗ trợ giọng Bắc / Nam, BigInt, hàng nghìn tỷ)
+- **Tab 4:** Biển số xe & ANPR OCR Cleaner (Thông tư 24/2023/TT-BCA, 0/O, 1/I, 8/B Disambiguation)
 
 ---
 
@@ -24,7 +25,7 @@ Trải nghiệm trực quan ngay trên trình duyệt không cần cài đặt:
 
 - **Tổng số package:** 50
 - **Ngôn ngữ:** 100% TypeScript
-- **Target format:** Dual Build ESM (`.mjs`) & CommonJS (`.cjs`)
+- **Target format:** Dual Build ESM (`.mjs`) & CommonJS (`.js`)
 - **Type Declarations:** Đầy đủ `.d.ts` & Source Maps
 
 ---
@@ -35,12 +36,12 @@ Trải nghiệm trực quan ngay trên trình duyệt không cần cài đặt:
 
 | # | Thư mục / Tên Package | Mô tả ngắn | Trạng thái |
 |---|---|---|:---:|
-| **01** | [`vn-cccd-parser`](./01-vn-cccd-parser) | Parse 12-digit Vietnam National Citizen Identity (CCCD/VNeID) number into birth year, century, gender, and birth province. | Ready ✅ |
+| **01** | [`@llein/vn-cccd-parser`](./01-vn-cccd-parser) | Parse 12-digit Vietnam National Citizen Identity (CCCD/VNeID) number into birth year, century, gender, and birth province. | [![npm](https://img.shields.io/npm/v/@llein/vn-cccd-parser.svg?style=flat-square&color=blue)](https://www.npmjs.com/package/@llein/vn-cccd-parser) |
 | **02** | [`vn-tax-id-validator`](./02-vn-tax-id-validator) | Validate and format Vietnam Tax Identification Numbers (Mã số thuế - MST 10 and 13 digits) using official Checksum Modulo-11 algorithm. | Ready ✅ |
-| **03** | [`vn-plate-format`](./03-vn-plate-format) | Format, standardize and parse Vietnam vehicle license plates according to Circular 24/2023/TT-BCA. | Ready ✅ |
-| **04** | [`vn-currency-words`](./04-vn-currency-words) | Convert numerical amounts to standardized Vietnamese words for banking, invoices, and legal contracts. | Ready ✅ |
+| **03** | [`@llein/vn-plate-format`](./03-vn-plate-format) | Format, standardize and parse Vietnam vehicle license plates according to Circular 24/2023/TT-BCA. | Ready ✅ |
+| **04** | [`@llein/vn-currency-words`](./04-vn-currency-words) | Convert numerical amounts to standardized Vietnamese words for banking, invoices, and legal contracts. | Ready ✅ |
 | **05** | [`vn-phone-carrier`](./05-vn-phone-carrier) | Detect Vietnamese mobile network operators (Viettel, Vina, Mobi, Vietnamobile, Wintel, I-Telecom) and validate national phone numbers. | Ready ✅ |
-| **06** | [`vn-bank-qr-gen`](./06-vn-bank-qr-gen) | Ultra-lightweight generator for VietQR (NAPAS 247) EMVCo payment payloads and quick-link QR URLs. | Ready ✅ |
+| **06** | [`@llein/vn-bank-qr-gen`](./06-vn-bank-qr-gen) | Ultra-lightweight generator for VietQR (NAPAS 247) EMVCo payment payloads and quick-link QR URLs. | [![npm](https://img.shields.io/npm/v/@llein/vn-bank-qr-gen.svg?style=flat-square&color=emerald)](https://www.npmjs.com/package/@llein/vn-bank-qr-gen) |
 | **07** | [`vn-slugify-plus`](./07-vn-slugify-plus) | Transform Vietnamese text with diacritics into URL-friendly, SEO-optimized slugs. Cleanly handles đ/Đ, emojis, and symbols. | Ready ✅ |
 | **08** | [`vn-address-parser`](./08-vn-address-parser) | Heuristic parser to break down unstructured Vietnamese address strings into Province, District, Ward, and Street parts. | Ready ✅ |
 | **09** | [`vn-zalo-oa-helper`](./09-vn-zalo-oa-helper) | Lightweight helper for Zalo Official Account (OA) and ZNS (Zalo Notification Service) payload formatting and signature verification. | Ready ✅ |
@@ -96,7 +97,7 @@ Trải nghiệm trực quan ngay trên trình duyệt không cần cài đặt:
 | # | Thư mục / Tên Package | Mô tả ngắn | Trạng thái |
 |---|---|---|:---:|
 | **41** | [`rtsp-url-builder`](./41-rtsp-url-builder) | Construct standardized RTSP video streaming URLs for major IP camera brands (Hikvision, Dahua, KBVision, Imou, Uniview). | Ready ✅ |
-| **42** | [`anpr-plate-cleaner`](./42-anpr-plate-cleaner) | Post-processing text cleaner for License Plate OCR (ANPR) resolving character confusions like 0 vs O, 1 vs I, 8 vs B based on position rules. | Ready ✅ |
+| **42** | [`@llein/anpr-plate-cleaner`](./42-anpr-plate-cleaner) | Post-processing text cleaner for License Plate OCR (ANPR) resolving character confusions like 0 vs O, 1 vs I, 8 vs B based on position rules. | Ready ✅ |
 | **43** | [`serial-com-buffer-parser`](./43-serial-com-buffer-parser) | Packet framer and buffer parser for Serial/COM/RS232/RS485 data streams using STX (0x02) and ETX (0x03) delimiters. | Ready ✅ |
 | **44** | [`bounding-box-scaler`](./44-bounding-box-scaler) | Transform and scale bounding boxes between original video/camera resolution and browser canvas/screen display dimensions. | Ready ✅ |
 | **45** | [`mjpeg-stream-reader`](./45-mjpeg-stream-reader) | Micro-client to extract individual JPEG image frames from HTTP multipart/x-mixed-replace MJPEG camera streams. | Ready ✅ |

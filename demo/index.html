@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Vietnam Micro-Utilities Playground | CCCD, VietQR & Currency Words</title>
+  <title>Vietnam Micro-Utilities Playground | CCCD, VietQR, Currency Words & ANPR</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 </head>
@@ -19,7 +19,7 @@
         Vietnam Dev-Toolkit Playground
       </h1>
       <p class="text-slate-400 text-sm mt-2">
-        Trải nghiệm trực quan bộ ba thư viện: <span class="text-indigo-400 font-mono">vn-cccd-parser</span>, <span class="text-emerald-400 font-mono">vn-bank-qr-gen</span>, và <span class="text-amber-400 font-mono">vn-currency-words</span>
+        Trải nghiệm trực quan bộ thư viện: <span class="text-indigo-400 font-mono">vn-cccd-parser</span>, <span class="text-emerald-400 font-mono">vn-bank-qr-gen</span>, <span class="text-amber-400 font-mono">vn-currency-words</span>, <span class="text-cyan-400 font-mono">vn-plate-format</span> & <span class="text-purple-400 font-mono">anpr-plate-cleaner</span>
       </p>
       <div class="mt-4 flex justify-center gap-3 text-xs">
         <a href="https://github.com/Llein-Dev/viet-dev-toolkit" target="_blank" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg text-slate-300 font-medium inline-flex items-center gap-1.5 transition">
@@ -42,6 +42,9 @@
         </button>
         <button id="tab-currency-btn" onclick="switchTab('currency')" class="px-4 py-2 rounded-lg text-xs md:text-sm font-semibold transition-all text-slate-400 hover:text-white">
           <i class="fa-solid fa-money-bill-wave mr-1.5"></i> 3. Đọc số tiền thành chữ
+        </button>
+        <button id="tab-plate-btn" onclick="switchTab('plate')" class="px-4 py-2 rounded-lg text-xs md:text-sm font-semibold transition-all text-slate-400 hover:text-white">
+          <i class="fa-solid fa-car-side mr-1.5"></i> 4. Biển số xe & ANPR OCR
         </button>
       </div>
     </div>
@@ -101,7 +104,7 @@
 
         <div class="mt-4 pt-4 border-t border-slate-700 text-xs text-slate-400 flex items-center justify-between">
           <span>Package: <code class="text-indigo-400">@llein/vn-cccd-parser</code></span>
-          <span class="px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 font-mono">2.6 KB</span>
+          <span class="px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 font-mono">v1.0.1 Live</span>
         </div>
       </div>
     </div>
@@ -110,119 +113,109 @@
     <div id="tab-vietqr" class="hidden grid grid-cols-1 md:grid-cols-2 gap-6">
       <div class="bg-slate-800/80 border border-slate-700/80 rounded-2xl p-6 shadow-xl">
         <h2 class="text-lg font-bold text-slate-200 mb-4 flex items-center gap-2">
-          <i class="fa-solid fa-building-columns text-emerald-400"></i> Thông tin thanh toán VietQR
+          <i class="fa-solid fa-building-columns text-emerald-400"></i> Tạo mã VietQR EMVCo
         </h2>
-        <div class="space-y-4">
+        <div class="space-y-3 text-xs">
           <div>
-            <label class="block text-xs font-medium text-slate-400 mb-1">Ngân hàng thụ hưởng:</label>
+            <label class="block text-slate-400 mb-1">Ngân hàng thụ hưởng:</label>
             <select
               id="bank-select"
-              class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-slate-100 text-sm focus:outline-none focus:border-emerald-500"
+              class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-slate-100 focus:outline-none focus:border-emerald-500"
             >
-              <option value="970422">MBBank (Ngân hàng Quân Đội)</option>
-              <option value="970436">Vietcombank (VCB)</option>
-              <option value="970407">Techcombank (TCB)</option>
-              <option value="970432">VPBank</option>
-              <option value="970415">VietinBank</option>
-              <option value="970418">BIDV</option>
-              <option value="970416">ACB</option>
-              <option value="970423">TPBank</option>
-              <option value="963388">Timo by BVBank</option>
-              <option value="546034">Cake by VPBank</option>
+              <option value="970436">Vietcombank (970436 - VCB)</option>
+              <option value="970415" selected>VietinBank (970415 - CTG)</option>
+              <option value="970418">BIDV (970418 - BIDV)</option>
+              <option value="970405">Agribank (970405 - VBA)</option>
+              <option value="970407">Techcombank (970407 - TCB)</option>
+              <option value="970422">MB Bank (970422 - MB)</option>
+              <option value="970423">TPBank (970423 - TPB)</option>
+              <option value="970432">VPBank (970432 - VPB)</option>
+              <option value="970416">ACB (970416 - ACB)</option>
             </select>
           </div>
-
           <div>
-            <label class="block text-xs font-medium text-slate-400 mb-1">Số tài khoản:</label>
+            <label class="block text-slate-400 mb-1">Số tài khoản nhận tiền:</label>
             <input
               id="account-input"
               type="text"
-              placeholder="VD: 0981234567"
-              value="0981234567"
-              class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-slate-100 font-mono text-sm focus:outline-none focus:border-emerald-500"
+              value="102870123456"
+              class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 font-mono text-slate-100 focus:outline-none focus:border-emerald-500"
             />
           </div>
-
-          <div>
-            <label class="block text-xs font-medium text-slate-400 mb-1">Số tiền (VNĐ - tùy chọn):</label>
-            <input
-              id="amount-input"
-              type="number"
-              placeholder="VD: 50000"
-              value="50000"
-              class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-slate-100 font-mono text-sm focus:outline-none focus:border-emerald-500"
-            />
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-slate-400 mb-1">Số tiền (VNĐ):</label>
+              <input
+                id="amount-input"
+                type="number"
+                value="50000"
+                class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 font-mono text-slate-100 focus:outline-none focus:border-emerald-500"
+              />
+            </div>
+            <div>
+              <label class="block text-slate-400 mb-1">Nội dung chuyển khoản:</label>
+              <input
+                id="message-input"
+                type="text"
+                value="Thanh toan cafe"
+                class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-slate-100 focus:outline-none focus:border-emerald-500"
+              />
+            </div>
           </div>
-
-          <div>
-            <label class="block text-xs font-medium text-slate-400 mb-1">Lời nhắn / Nội dung chuyển khoản:</label>
-            <input
-              id="message-input"
-              type="text"
-              maxlength="25"
-              placeholder="VD: DH12345"
-              value="DH12345"
-              class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-slate-100 text-sm focus:outline-none focus:border-emerald-500"
-            />
-          </div>
-
           <button
             onclick="updateVietQR()"
-            class="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-xl transition shadow-lg shadow-emerald-600/30"
+            class="w-full py-2.5 mt-2 bg-emerald-600 hover:bg-emerald-500 rounded-xl text-white font-semibold transition shadow-lg shadow-emerald-600/30"
           >
-            Tạo mã VietQR chuẩn NAPAS247
+            Tạo chuỗi VietQR & Hiển thị QR
           </button>
         </div>
       </div>
 
-      <div class="bg-slate-800/80 border border-slate-700/80 rounded-2xl p-6 shadow-xl flex flex-col items-center justify-between">
-        <div class="w-full flex flex-col items-center">
+      <div class="bg-slate-800/80 border border-slate-700/80 rounded-2xl p-6 shadow-xl flex flex-col justify-between">
+        <div>
           <h2 class="text-lg font-bold text-slate-200 mb-4 flex items-center gap-2">
-            <i class="fa-solid fa-qrcode text-emerald-400"></i> Mã VietQR Quét Trực Tiếp
+            <i class="fa-solid fa-qrcode text-emerald-400"></i> Mã VietQR Chuẩn EMVCo
           </h2>
-
-          <div class="bg-white p-3 rounded-2xl shadow-2xl border-4 border-emerald-500/30 flex justify-center items-center">
-            <img id="qr-image" src="" alt="VietQR" class="w-48 h-48 object-contain" />
+          <div class="flex flex-col items-center justify-center p-4 bg-slate-900 rounded-xl border border-slate-700/60">
+            <img id="qr-image" class="w-48 h-48 bg-white p-2 rounded-xl shadow-md" alt="VietQR" />
+            <p class="text-[11px] text-slate-400 mt-2 font-mono">Quét bằng bất kỳ App Ngân hàng nào tại VN</p>
           </div>
-
-          <div class="w-full mt-4 bg-slate-900 p-3 rounded-xl border border-slate-700">
-            <div class="text-[11px] text-slate-400 uppercase font-mono tracking-wider mb-1">EMVCo Payload:</div>
-            <div id="emvco-text" class="text-xs font-mono text-emerald-400 break-all select-all"></div>
+          <div class="mt-4">
+            <label class="block text-[11px] font-semibold text-slate-400 uppercase font-mono mb-1">EMVCo Payload String:</label>
+            <div id="emvco-text" class="p-3 bg-slate-950 rounded-xl font-mono text-[11px] text-emerald-400 break-all select-all border border-slate-800"></div>
           </div>
         </div>
 
-        <div class="w-full mt-4 pt-4 border-t border-slate-700 text-xs text-slate-400 flex items-center justify-between">
+        <div class="mt-4 pt-4 border-t border-slate-700 text-xs text-slate-400 flex items-center justify-between">
           <span>Package: <code class="text-emerald-400">@llein/vn-bank-qr-gen</code></span>
-          <span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono">CRC16 Verified ✅</span>
+          <span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono">CRC16-CCITT Validated ✅</span>
         </div>
       </div>
     </div>
 
-    <!-- TAB 3: CURRENCY WORDS CONVERTER -->
+    <!-- TAB 3: CURRENCY WORDS -->
     <div id="tab-currency" class="hidden grid grid-cols-1 md:grid-cols-2 gap-6">
       <div class="bg-slate-800/80 border border-slate-700/80 rounded-2xl p-6 shadow-xl">
         <h2 class="text-lg font-bold text-slate-200 mb-4 flex items-center gap-2">
-          <i class="fa-solid fa-calculator text-amber-400"></i> Nhập số tiền
+          <i class="fa-solid fa-calculator text-amber-400"></i> Nhập số tiền (VND)
         </h2>
         <div class="space-y-4">
           <div>
-            <label class="block text-xs font-medium text-slate-400 mb-1">Số tiền (chữ số):</label>
+            <label class="block text-xs font-medium text-slate-400 mb-1">Số tiền số nguyên hoặc BigInt:</label>
             <input
               id="currency-input"
               type="text"
-              placeholder="VD: 1500000"
               value="1500000"
-              class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-100 font-mono text-xl focus:outline-none focus:border-amber-500"
+              class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-100 font-mono tracking-wider text-xl focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500"
             />
           </div>
 
-          <!-- Quick shortcuts -->
           <div class="flex flex-wrap gap-2">
-            <button onclick="setCurrency(50000)" class="px-2.5 py-1 bg-slate-900 hover:bg-slate-700 border border-slate-700 rounded text-xs text-slate-300 font-mono">50.000</button>
-            <button onclick="setCurrency(500000)" class="px-2.5 py-1 bg-slate-900 hover:bg-slate-700 border border-slate-700 rounded text-xs text-slate-300 font-mono">500.000</button>
-            <button onclick="setCurrency(1500000)" class="px-2.5 py-1 bg-slate-900 hover:bg-slate-700 border border-slate-700 rounded text-xs text-slate-300 font-mono">1.500.000</button>
-            <button onclick="setCurrency(25000000)" class="px-2.5 py-1 bg-slate-900 hover:bg-slate-700 border border-slate-700 rounded text-xs text-slate-300 font-mono">25.000.000</button>
-            <button onclick="setCurrency(1000000000)" class="px-2.5 py-1 bg-slate-900 hover:bg-slate-700 border border-slate-700 rounded text-xs text-slate-300 font-mono">1 Tỷ</button>
+            <button onclick="setCurrency('1500000')" class="px-2.5 py-1 bg-slate-900 hover:bg-slate-700 border border-slate-700 rounded-lg text-xs text-slate-300 font-mono">1.5 Tr</button>
+            <button onclick="setCurrency('25000000')" class="px-2.5 py-1 bg-slate-900 hover:bg-slate-700 border border-slate-700 rounded-lg text-xs text-slate-300 font-mono">25 Tr</button>
+            <button onclick="setCurrency('1250000000')" class="px-2.5 py-1 bg-slate-900 hover:bg-slate-700 border border-slate-700 rounded-lg text-xs text-slate-300 font-mono">1.25 Tỷ</button>
+            <button onclick="setCurrency('987654321000')" class="px-2.5 py-1 bg-slate-900 hover:bg-slate-700 border border-slate-700 rounded-lg text-xs text-slate-300 font-mono">987 Tỷ</button>
+            <button onclick="setCurrency('5000000000000000')" class="px-2.5 py-1 bg-slate-900 hover:bg-slate-700 border border-slate-700 rounded-lg text-xs text-slate-300 font-mono">5 Triệu Tỷ (BigInt)</button>
           </div>
 
           <div class="grid grid-cols-2 gap-3 pt-2">
@@ -281,6 +274,49 @@
         </div>
       </div>
     </div>
+
+    <!-- TAB 4: BIỂN SỐ XE & ANPR OCR -->
+    <div id="tab-plate" class="hidden grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="bg-slate-800/80 border border-slate-700/80 rounded-2xl p-6 shadow-xl">
+        <h2 class="text-lg font-bold text-slate-200 mb-4 flex items-center gap-2">
+          <i class="fa-solid fa-camera text-cyan-400"></i> Nhập biển số hoặc Text OCR thô
+        </h2>
+        <div class="space-y-4">
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">Chuỗi biển số (hỗ trợ nhiều dòng, lỗi OCR ký tự):</label>
+            <textarea
+              id="plate-input"
+              rows="3"
+              placeholder="VD: SIK-999.9B hoặc 59-P1\n123.45"
+              class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-slate-100 font-mono text-base focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500"
+            >SIK-999.9B</textarea>
+          </div>
+
+          <div class="flex flex-wrap gap-2">
+            <button onclick="setPlate('51K-999.99')" class="px-2.5 py-1 bg-slate-900 hover:bg-slate-700 border border-slate-700 rounded-lg text-xs text-slate-300">🚗 Ô tô 5 số</button>
+            <button onclick="setPlate('59-P1\n123.45')" class="px-2.5 py-1 bg-slate-900 hover:bg-slate-700 border border-slate-700 rounded-lg text-xs text-slate-300">🛵 Xe máy 2 dòng</button>
+            <button onclick="setPlate('29-MD1 123.45')" class="px-2.5 py-1 bg-slate-900 hover:bg-slate-700 border border-slate-700 rounded-lg text-xs text-slate-300">⚡ Xe máy điện</button>
+            <button onclick="setPlate('TM-12.34')" class="px-2.5 py-1 bg-slate-900 hover:bg-slate-700 border border-slate-700 rounded-lg text-xs text-slate-300">🎖️ Quân đội</button>
+            <button onclick="setPlate('SIK-999.9B')" class="px-2.5 py-1 bg-rose-950/60 hover:bg-rose-900/60 border border-rose-700 rounded-lg text-xs text-rose-300">⚠️ Lỗi OCR (S/I/B)</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-slate-800/80 border border-slate-700/80 rounded-2xl p-6 shadow-xl flex flex-col justify-between">
+        <div>
+          <h2 class="text-lg font-bold text-slate-200 mb-4 flex items-center gap-2">
+            <i class="fa-solid fa-shield-halved text-cyan-400"></i> Kết quả Chuẩn hóa & Sửa lỗi ANPR
+          </h2>
+
+          <div id="plate-result" class="space-y-3"></div>
+        </div>
+
+        <div class="mt-4 pt-4 border-t border-slate-700 text-xs text-slate-400 flex items-center justify-between">
+          <span>Packages: <code class="text-cyan-400">@llein/vn-plate-format</code> & <code class="text-purple-400">@llein/anpr-plate-cleaner</code></span>
+          <span class="px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 font-mono">TT 24/2023 Compliant ✅</span>
+        </div>
+      </div>
+    </div>
   </div>
 
   <script>
@@ -288,20 +324,24 @@
       const cccdTab = document.getElementById('tab-cccd');
       const vietqrTab = document.getElementById('tab-vietqr');
       const currencyTab = document.getElementById('tab-currency');
+      const plateTab = document.getElementById('tab-plate');
 
       const cccdBtn = document.getElementById('tab-cccd-btn');
       const vietqrBtn = document.getElementById('tab-vietqr-btn');
       const currencyBtn = document.getElementById('tab-currency-btn');
+      const plateBtn = document.getElementById('tab-plate-btn');
 
       const inactiveClass = 'px-4 py-2 rounded-lg text-xs md:text-sm font-semibold transition-all text-slate-400 hover:text-white';
 
       cccdTab.classList.add('hidden');
       vietqrTab.classList.add('hidden');
       currencyTab.classList.add('hidden');
+      plateTab.classList.add('hidden');
 
       cccdBtn.className = inactiveClass;
       vietqrBtn.className = inactiveClass;
       currencyBtn.className = inactiveClass;
+      plateBtn.className = inactiveClass;
 
       if (tab === 'cccd') {
         cccdTab.classList.remove('hidden');
@@ -314,6 +354,10 @@
         currencyTab.classList.remove('hidden');
         currencyBtn.className = 'px-4 py-2 rounded-lg text-xs md:text-sm font-semibold transition-all bg-amber-600 text-white shadow-lg shadow-amber-600/30';
         renderCurrencyWords();
+      } else if (tab === 'plate') {
+        plateTab.classList.remove('hidden');
+        plateBtn.className = 'px-4 py-2 rounded-lg text-xs md:text-sm font-semibold transition-all bg-cyan-600 text-white shadow-lg shadow-cyan-600/30';
+        renderPlate();
       }
     }
 
@@ -331,7 +375,7 @@
     };
 
     function parseCCCDNumber(id) {
-      if (!/^\\d{12}$/.test(id)) {
+      if (!/^\d{12}$/.test(id)) {
         return { isValid: false, error: 'Phải gồm đúng 12 chữ số' };
       }
       const provCode = id.slice(0, 3);
@@ -529,7 +573,7 @@
         if (chunkWords) words.push(chunkWords + (scale ? ' ' + scale : ''));
       }
 
-      let res = words.join(' ').replace(/\\s+/g, ' ').trim() + ' ' + suffix;
+      let res = words.join(' ').replace(/\s+/g, ' ').trim() + ' ' + suffix;
       return res.charAt(0).toUpperCase() + res.slice(1);
     }
 
@@ -551,9 +595,132 @@
       document.getElementById('currency-words-output').innerText = text;
     }
 
+    // --- Plate & ANPR Logic ---
+    const PLATE_PROVINCES = {
+      '11': 'Cao Bằng', '12': 'Lạng Sơn', '14': 'Quảng Ninh', '15': 'Hải Phòng', '16': 'Hải Phòng',
+      '17': 'Thái Bình', '18': 'Nam Định', '19': 'Phú Thọ', '20': 'Thái Nguyên', '21': 'Yên Bái',
+      '22': 'Tuyên Quang', '23': 'Hà Giang', '24': 'Lào Cai', '25': 'Lai Châu', '26': 'Sơn La',
+      '27': 'Điện Biên', '28': 'Hòa Bình', '29': 'Hà Nội', '30': 'Hà Nội', '31': 'Hà Nội',
+      '32': 'Hà Nội', '33': 'Hà Nội', '40': 'Hà Nội', '34': 'Hải Dương', '35': 'Ninh Bình',
+      '36': 'Thanh Hóa', '37': 'Nghệ An', '38': 'Hà Tĩnh', '43': 'Đà Nẵng', '47': 'Đắk Lắk',
+      '48': 'Đắk Nông', '49': 'Lâm Đồng', '50': 'TP. Hồ Chí Minh', '51': 'TP. Hồ Chí Minh',
+      '52': 'TP. Hồ Chí Minh', '53': 'TP. Hồ Chí Minh', '54': 'TP. Hồ Chí Minh', '55': 'TP. Hồ Chí Minh',
+      '56': 'TP. Hồ Chí Minh', '57': 'TP. Hồ Chí Minh', '58': 'TP. Hồ Chí Minh', '59': 'TP. Hồ Chí Minh',
+      '41': 'TP. Hồ Chí Minh', '60': 'Đồng Nai', '61': 'Bình Dương', '70': 'Tây Ninh', '72': 'Bà Rịa - Vũng Tàu',
+      '80': 'Cục CSGT / Cơ quan TƯ'
+    };
+
+    const LETTER_TO_DIGIT = { O: '0', D: '0', Q: '0', I: '1', L: '1', Z: '2', E: '3', A: '4', S: '5', G: '6', B: '8', T: '7' };
+    const DIGIT_TO_LETTER = { '0': 'O', '1': 'I', '2': 'Z', '3': 'E', '4': 'A', '5': 'S', '6': 'G', '7': 'T', '8': 'B' };
+
+    function toDig(c) { return (c >= '0' && c <= '9') ? c : (LETTER_TO_DIGIT[c] || c); }
+    function toLet(c) { return (c >= 'A' && c <= 'Z') ? c : (DIGIT_TO_LETTER[c] || c); }
+
+    function setPlate(val) {
+      document.getElementById('plate-input').value = val;
+      renderPlate();
+    }
+
+    function renderPlate() {
+      const raw = document.getElementById('plate-input').value.trim();
+      const container = document.getElementById('plate-result');
+
+      const lines = raw.split(/[\r\n]+/).map(s => s.trim()).filter(Boolean);
+      let text = '';
+      let isMulti = lines.length >= 2;
+      let topLineClean = '';
+
+      if (isMulti) {
+        topLineClean = lines[0].toUpperCase().replace(/[^A-Z0-9]/g, '');
+        text = topLineClean + lines.slice(1).join('').toUpperCase().replace(/[^A-Z0-9]/g, '');
+      } else {
+        text = raw.toUpperCase().replace(/[^A-Z0-9]/g, '');
+      }
+
+      if (text.length < 5) {
+        container.innerHTML = `<div class="p-3 bg-slate-900 rounded-xl text-slate-400 text-xs">Vui lòng nhập biển số hợp lệ...</div>`;
+        return;
+      }
+
+      // Check military
+      let vehicle = 'Ô tô dân sự';
+      let color = 'white';
+      let prov = 'Chưa xác định';
+      let formatted = text;
+      let compact = text;
+
+      if (/^[A-Z]{2}/.test(text) && !/^[0-9]/.test(text[0])) {
+        const p1 = text[0], p2 = text[1];
+        const nums = text.slice(2).split('').map(toDig).join('');
+        compact = `${p1}${p2}${nums}`;
+        formatted = `${p1}${p2}-${nums.slice(0, 2)}.${nums.slice(2)}`;
+        vehicle = 'Xe Quân đội';
+        color = 'red';
+        prov = 'Bộ Quốc Phòng / Quân đội';
+      } else {
+        const provCode = `${toDig(text[0])}${toDig(text[1])}`;
+        prov = PLATE_PROVINCES[provCode] || ('Tỉnh/TP mã ' + provCode);
+
+        const char2 = toLet(text[2]);
+        const char3 = text[3];
+        const hasSep3 = /^[A-Z0-9]{3}[-\s]/i.test(raw);
+
+        if (text.slice(2, 4) === 'MD') {
+          const sub = toDig(text[4]);
+          const nums = text.slice(5).split('').map(toDig).join('');
+          compact = `${provCode}MD${sub}${nums}`;
+          formatted = `${provCode}-MD${sub} ${nums.slice(0, 3)}.${nums.slice(3)}`;
+          vehicle = 'Xe máy điện';
+        } else if (!hasSep3 && (isMulti && topLineClean.length === 4 || (text.length === 9 && (char3 >= '0' && char3 <= '9' || char3 === 'I' || char3 === '1')))) {
+          const sub = toDig(char3);
+          const nums = text.slice(4).split('').map(toDig).join('');
+          compact = `${provCode}${char2}${sub}${nums}`;
+          formatted = `${provCode}-${char2}${sub} ${nums.length === 5 ? (nums.slice(0, 3) + '.' + nums.slice(3)) : nums}`;
+          vehicle = 'Xe mô tô / Xe máy';
+        } else {
+          const nums = text.slice(3).split('').map(toDig).join('');
+          compact = `${provCode}${char2}${nums}`;
+          formatted = `${provCode}${char2}-${nums.length === 5 ? (nums.slice(0, 3) + '.' + nums.slice(3)) : nums}`;
+          vehicle = 'Xe ô tô';
+        }
+      }
+
+      container.innerHTML = `
+        <div class="grid grid-cols-2 gap-3 text-sm">
+          <div class="p-3 bg-slate-900 rounded-xl border border-slate-700/60">
+            <div class="text-[11px] text-slate-400">Biển số chuẩn hóa (TT 24)</div>
+            <div class="font-bold text-cyan-300 font-mono text-lg mt-0.5">${formatted}</div>
+          </div>
+          <div class="p-3 bg-slate-900 rounded-xl border border-slate-700/60">
+            <div class="text-[11px] text-slate-400">Chuỗi rút gọn (Compact)</div>
+            <div class="font-semibold text-slate-100 font-mono mt-0.5">${compact}</div>
+          </div>
+          <div class="p-3 bg-slate-900 rounded-xl border border-slate-700/60">
+            <div class="text-[11px] text-slate-400">Loại phương tiện</div>
+            <div class="font-semibold text-emerald-400 mt-0.5">${vehicle}</div>
+          </div>
+          <div class="p-3 bg-slate-900 rounded-xl border border-slate-700/60">
+            <div class="text-[11px] text-slate-400">Địa bàn đăng ký</div>
+            <div class="font-semibold text-slate-100 mt-0.5">${prov}</div>
+          </div>
+        </div>
+
+        <div class="p-3 bg-cyan-950/40 rounded-xl border border-cyan-800/40 text-xs">
+          <div class="font-semibold text-cyan-300 mb-1 flex items-center gap-1.5">
+            <i class="fa-solid fa-wand-magic-sparkles"></i> Tính năng ANPR Plate Cleaner:
+          </div>
+          <p class="text-slate-300">
+            Tự động phát hiện và giải quyết nhầm lẫn ký tự OCR (0 ↔ O, 1 ↔ I, 8 ↔ B) dựa vào vị trí cú pháp Thông tư 24/2023/TT-BCA.
+          </p>
+        </div>
+      `;
+    }
+
     document.getElementById('cccd-input').addEventListener('input', renderCCCD);
     document.getElementById('currency-input').addEventListener('input', renderCurrencyWords);
+    document.getElementById('plate-input').addEventListener('input', renderPlate);
     renderCCCD();
+    renderPlate();
   </script>
 </body>
 </html>
