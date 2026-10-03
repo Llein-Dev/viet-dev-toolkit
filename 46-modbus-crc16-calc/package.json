@@ -1,0 +1,43 @@
+{
+  "name": "modbus-crc16-calc",
+  "version": "1.0.0",
+  "description": "High-speed pure JavaScript Modbus RTU CRC16 checksum calculation for industrial IoT and PLC communication packets.",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --format cjs,esm --dts --clean",
+    "dev": "tsup src/index.ts --format cjs,esm --watch --dts",
+    "test": "vitest run",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "utility",
+    "zero-dependency",
+    "typescript",
+    "modbus",
+    "crc16",
+    "rtu",
+    "plc",
+    "iot",
+    "checksum",
+    "industrial"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "tsup": "^8.3.5",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  }
+}

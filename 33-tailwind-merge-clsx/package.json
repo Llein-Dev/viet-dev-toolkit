@@ -1,0 +1,42 @@
+{
+  "name": "tailwind-merge-clsx",
+  "version": "1.0.0",
+  "description": "Zero-bloat utility uniting clsx and lightweight Tailwind class conflict resolution into a single cn() function for Shadcn/UI.",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --format cjs,esm --dts --clean",
+    "dev": "tsup src/index.ts --format cjs,esm --watch --dts",
+    "test": "vitest run",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "utility",
+    "zero-dependency",
+    "typescript",
+    "tailwind",
+    "clsx",
+    "tailwind-merge",
+    "cn",
+    "shadcn",
+    "classes"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "tsup": "^8.3.5",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  }
+}

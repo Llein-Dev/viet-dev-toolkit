@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vietnam Micro-Utilities Playground | CCCD & VietQR</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen">
+  <div class="max-w-5xl mx-auto px-4 py-8">
+    <!-- Header -->
+    <header class="text-center mb-10">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-semibold mb-3 border border-emerald-500/20">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        Zero-Dependency Pure TypeScript Utilities
+      </div>
+      <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight bg-gradient-to-r from-blue-400 via-indigo-300 to-purple-400 bg-clip-text text-transparent">
+        Vietnam Dev-Toolkit Playground
+      </h1>
+      <p class="text-slate-400 text-sm mt-2">
+        Trải nghiệm trực quan 2 thư viện Micro-Utility: <span class="text-indigo-400 font-mono">vn-cccd-parser</span> và <span class="text-emerald-400 font-mono">vn-bank-qr-gen</span>
+      </p>
+    </header>
+
+    <!-- Tab navigation -->
+    <div class="flex justify-center mb-8">
+      <div class="bg-slate-800 p-1.5 rounded-xl border border-slate-700 flex gap-2">
+        <button id="tab-cccd-btn" onclick="switchTab('cccd')" class="px-5 py-2.5 rounded-lg text-sm font-semibold transition-all bg-indigo-600 text-white shadow-lg shadow-indigo-600/30">
+          <i class="fa-solid fa-id-card mr-2"></i> 1. CCCD / VNeID Parser
+        </button>
+        <button id="tab-vietqr-btn" onclick="switchTab('vietqr')" class="px-5 py-2.5 rounded-lg text-sm font-semibold transition-all text-slate-400 hover:text-white">
+          <i class="fa-solid fa-qrcode mr-2"></i> 2. VietQR NAPAS247 Generator
+        </button>
+      </div>
+    </div>
+
+    <!-- TAB 1: CCCD PARSER -->
+    <div id="tab-cccd" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- Input Panel -->
+      <div class="bg-slate-800/80 border border-slate-700/80 rounded-2xl p-6 shadow-xl">
+        <h2 class="text-lg font-bold text-slate-200 mb-4 flex items-center gap-2">
+          <i class="fa-solid fa-magnifying-glass text-indigo-400"></i> Nhập số CCCD 12 số
+        </h2>
+        <div class="space-y-4">
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">Số Căn cước công dân (12 chữ số):</label>
+            <div class="relative">
+              <input
+                id="cccd-input"
+                type="text"
+                maxlength="12"
+                placeholder="VD: 001095012345"
+                value="001095012345"
+                class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-100 font-mono tracking-widest text-lg focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+              />
+              <button
+                onclick="generateRandomCCCD()"
+                class="absolute right-2 top-2 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-600 rounded-lg text-xs text-indigo-300 font-medium transition"
+              >
+                🎲 Random Mock
+              </button>
+            </div>
+          </div>
+
+          <div class="pt-2 border-t border-slate-700/60">
+            <label class="block text-xs font-medium text-slate-400 mb-1">Hoặc dán chuỗi QR Code CCCD gắn chip:</label>
+            <textarea
+              id="qr-input"
+              rows="3"
+              placeholder="001095012345|012345678|Nguyễn Văn An|25101995|Nam|123 Phố Huế, Hà Nội|10122021"
+              class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-xs text-slate-300 font-mono focus:outline-none focus:border-indigo-500"
+            ></textarea>
+            <button
+              onclick="parseChipQR()"
+              class="mt-2 w-full py-2 bg-slate-700 hover:bg-slate-600 rounded-lg text-xs font-medium transition text-slate-200"
+            >
+              Parse chuỗi QR Code Chip
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Result Panel -->
+      <div class="bg-slate-800/80 border border-slate-700/80 rounded-2xl p-6 shadow-xl flex flex-col justify-between">
+        <div>
+          <h2 class="text-lg font-bold text-slate-200 mb-4 flex items-center gap-2">
+            <i class="fa-solid fa-circle-check text-emerald-400"></i> Kết quả phân tích (Real-time)
+          </h2>
+
+          <div id="cccd-result" class="space-y-3">
+            <!-- Dynamic Result Card -->
+          </div>
+        </div>
+
+        <div class="mt-4 pt-4 border-t border-slate-700 text-xs text-slate-400 flex items-center justify-between">
+          <span>Package: <code class="text-indigo-400">vn-cccd-parser</code></span>
+          <span class="px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 font-mono">2.6 KB</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: VIETQR GENERATOR -->
+    <div id="tab-vietqr" class="hidden grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- Input Panel -->
+      <div class="bg-slate-800/80 border border-slate-700/80 rounded-2xl p-6 shadow-xl">
+        <h2 class="text-lg font-bold text-slate-200 mb-4 flex items-center gap-2">
+          <i class="fa-solid fa-building-columns text-emerald-400"></i> Thông tin thanh toán VietQR
+        </h2>
+        <div class="space-y-4">
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">Ngân hàng thụ hưởng:</label>
+            <select
+              id="bank-select"
+              class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-slate-100 text-sm focus:outline-none focus:border-emerald-500"
+            >
+              <option value="970422">MBBank (Ngân hàng Quân Đội)</option>
+              <option value="970436">Vietcombank (VCB)</option>
+              <option value="970407">Techcombank (TCB)</option>
+              <option value="970432">VPBank</option>
+              <option value="970415">VietinBank</option>
+              <option value="970418">BIDV</option>
+              <option value="970416">ACB</option>
+              <option value="970423">TPBank</option>
+              <option value="963388">Timo by BVBank</option>
+              <option value="546034">Cake by VPBank</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">Số tài khoản:</label>
+            <input
+              id="account-input"
+              type="text"
+              placeholder="VD: 0981234567"
+              value="0981234567"
+              class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-slate-100 font-mono text-sm focus:outline-none focus:border-emerald-500"
+            />
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">Số tiền (VNĐ - tùy chọn):</label>
+            <input
+              id="amount-input"
+              type="number"
+              placeholder="VD: 50000"
+              value="50000"
+              class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-slate-100 font-mono text-sm focus:outline-none focus:border-emerald-500"
+            />
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">Lời nhắn / Nội dung chuyển khoản:</label>
+            <input
+              id="message-input"
+              type="text"
+              maxlength="25"
+              placeholder="VD: DH12345"
+              value="DH12345"
+              class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-slate-100 text-sm focus:outline-none focus:border-emerald-500"
+            />
+          </div>
+
+          <button
+            onclick="updateVietQR()"
+            class="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-xl transition shadow-lg shadow-emerald-600/30"
+          >
+            Tạo mã VietQR chuẩn NAPAS247
+          </button>
+        </div>
+      </div>
+
+      <!-- Result Panel -->
+      <div class="bg-slate-800/80 border border-slate-700/80 rounded-2xl p-6 shadow-xl flex flex-col items-center justify-between">
+        <div class="w-full flex flex-col items-center">
+          <h2 class="text-lg font-bold text-slate-200 mb-4 flex items-center gap-2">
+            <i class="fa-solid fa-qrcode text-emerald-400"></i> Mã VietQR Quét Trực Tiếp
+          </h2>
+
+          <div class="bg-white p-3 rounded-2xl shadow-2xl border-4 border-emerald-500/30 flex justify-center items-center">
+            <img id="qr-image" src="" alt="VietQR" class="w-48 h-48 object-contain" />
+          </div>
+
+          <div class="w-full mt-4 bg-slate-900 p-3 rounded-xl border border-slate-700">
+            <div class="text-[11px] text-slate-400 uppercase font-mono tracking-wider mb-1">EMVCo Payload:</div>
+            <div id="emvco-text" class="text-xs font-mono text-emerald-400 break-all select-all"></div>
+          </div>
+        </div>
+
+        <div class="w-full mt-4 pt-4 border-t border-slate-700 text-xs text-slate-400 flex items-center justify-between">
+          <span>Package: <code class="text-emerald-400">vn-bank-qr-gen</code></span>
+          <span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono">CRC16 Verified ✅</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Tab switcher
+    function switchTab(tab) {
+      const cccdTab = document.getElementById('tab-cccd');
+      const vietqrTab = document.getElementById('tab-vietqr');
+      const cccdBtn = document.getElementById('tab-cccd-btn');
+      const vietqrBtn = document.getElementById('tab-vietqr-btn');
+
+      if (tab === 'cccd') {
+        cccdTab.classList.remove('hidden');
+        vietqrTab.classList.add('hidden');
+        cccdBtn.className = 'px-5 py-2.5 rounded-lg text-sm font-semibold transition-all bg-indigo-600 text-white shadow-lg shadow-indigo-600/30';
+        vietqrBtn.className = 'px-5 py-2.5 rounded-lg text-sm font-semibold transition-all text-slate-400 hover:text-white';
+      } else {
+        vietqrTab.classList.remove('hidden');
+        cccdTab.classList.add('hidden');
+        vietqrBtn.className = 'px-5 py-2.5 rounded-lg text-sm font-semibold transition-all bg-emerald-600 text-white shadow-lg shadow-emerald-600/30';
+        cccdBtn.className = 'px-5 py-2.5 rounded-lg text-sm font-semibold transition-all text-slate-400 hover:text-white';
+        updateVietQR();
+      }
+    }
+
+    const PROVINCE_MAP = {
+      '001': 'Thành phố Hà Nội',
+      '079': 'Thành phố Hồ Chí Minh',
+      '048': 'Thành phố Đà Nẵng',
+      '031': 'Thành phố Hải Phòng',
+      '092': 'Thành phố Cần Thơ',
+      '038': 'Tỉnh Thanh Hoá',
+      '040': 'Tỉnh Nghệ An',
+      '075': 'Tỉnh Đồng Nai',
+      '074': 'Tỉnh Bình Dương'
+    };
+
+    function parseCCCDNumber(id) {
+      if (!/^\\d{12}$/.test(id)) {
+        return { isValid: false, error: 'Phải gồm đúng 12 chữ số' };
+      }
+      const provCode = id.slice(0, 3);
+      const prov = PROVINCE_MAP[provCode] || ('Tỉnh/TP mã ' + provCode);
+      const genderDigit = parseInt(id[3], 10);
+      const yearSuffix = parseInt(id.slice(4, 6), 10);
+      const isFemale = genderDigit % 2 !== 0;
+      const baseYear = 1900 + Math.floor(genderDigit / 2) * 100;
+      const birthYear = baseYear + yearSuffix;
+      const currentYear = new Date().getFullYear();
+      const age = currentYear - birthYear;
+
+      return {
+        isValid: true,
+        province: prov,
+        gender: isFemale ? 'Nữ' : 'Nam',
+        birthYear,
+        age,
+        century: 'Thế kỷ ' + (Math.floor(genderDigit / 2) + 20),
+        randomCode: id.slice(6, 12),
+        renewalAge25: birthYear + 25,
+        renewalAge40: birthYear + 40,
+        renewalAge60: birthYear + 60
+      };
+    }
+
+    function renderCCCD() {
+      const input = document.getElementById('cccd-input').value.trim();
+      const container = document.getElementById('cccd-result');
+      const res = parseCCCDNumber(input);
+
+      if (!res.isValid) {
+        container.innerHTML = `
+          <div class="p-4 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-sm">
+            <i class="fa-solid fa-triangle-exclamation mr-1"></i> Số CCCD chưa hợp lệ: ${res.error}
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = `
+        <div class="grid grid-cols-2 gap-3 text-sm">
+          <div class="p-3 bg-slate-900 rounded-xl border border-slate-700/60">
+            <div class="text-[11px] text-slate-400">Tỉnh/Thành phố cấp</div>
+            <div class="font-semibold text-slate-100 mt-0.5">${res.province}</div>
+          </div>
+          <div class="p-3 bg-slate-900 rounded-xl border border-slate-700/60">
+            <div class="text-[11px] text-slate-400">Giới tính & Thế kỷ</div>
+            <div class="font-semibold text-slate-100 mt-0.5">${res.gender} (${res.century})</div>
+          </div>
+          <div class="p-3 bg-slate-900 rounded-xl border border-slate-700/60">
+            <div class="text-[11px] text-slate-400">Năm sinh & Tuổi</div>
+            <div class="font-semibold text-slate-100 mt-0.5">${res.birthYear} (${res.age} tuổi)</div>
+          </div>
+          <div class="p-3 bg-slate-900 rounded-xl border border-slate-700/60">
+            <div class="text-[11px] text-slate-400">Số định danh ngẫu nhiên</div>
+            <div class="font-mono text-indigo-400 font-semibold mt-0.5">${res.randomCode}</div>
+          </div>
+        </div>
+
+        <div class="p-3 bg-indigo-950/40 rounded-xl border border-indigo-800/40 text-xs">
+          <div class="font-semibold text-indigo-300 mb-1 flex items-center gap-1.5">
+            <i class="fa-solid fa-clock-rotate-left"></i> Mốc đổi thẻ theo Luật Căn cước (25, 40, 60 tuổi):
+          </div>
+          <div class="text-slate-300 flex justify-between mt-2 font-mono">
+            <span>25 tuổi: <b>${res.renewalAge25}</b></span>
+            <span>40 tuổi: <b>${res.renewalAge40}</b></span>
+            <span>60 tuổi: <b>${res.renewalAge60}</b></span>
+          </div>
+        </div>
+      `;
+    }
+
+    function generateRandomCCCD() {
+      const provs = ['001', '079', '048', '031', '092'];
+      const p = provs[Math.floor(Math.random() * provs.length)];
+      const g = Math.floor(Math.random() * 4);
+      const y = String(Math.floor(Math.random() * 30) + 75).padStart(2, '0');
+      const r = String(Math.floor(Math.random() * 1000000)).padStart(6, '0');
+      const cccd = p + g + y + r;
+      document.getElementById('cccd-input').value = cccd;
+      renderCCCD();
+    }
+
+    function parseChipQR() {
+      const raw = document.getElementById('qr-input').value.trim();
+      if (!raw) return;
+      const parts = raw.split('|');
+      if (parts.length >= 6) {
+        document.getElementById('cccd-input').value = parts[0];
+        renderCCCD();
+      }
+    }
+
+    // CRC16-CCITT for VietQR
+    function crc16CCITT(data) {
+      let crc = 0xffff;
+      for (let i = 0; i < data.length; i++) {
+        const byte = data.charCodeAt(i);
+        crc ^= byte << 8;
+        for (let j = 0; j < 8; j++) {
+          if ((crc & 0x8000) !== 0) {
+            crc = ((crc << 1) ^ 0x1021) & 0xffff;
+          } else {
+            crc = (crc << 1) & 0xffff;
+          }
+        }
+      }
+      return crc.toString(16).toUpperCase().padStart(4, '0');
+    }
+
+    function tlv(tag, value) {
+      const len = String(value.length).padStart(2, '0');
+      return tag + len + value;
+    }
+
+    function updateVietQR() {
+      const bank = document.getElementById('bank-select').value;
+      const acc = document.getElementById('account-input').value.trim();
+      const amount = document.getElementById('amount-input').value.trim();
+      const msg = document.getElementById('message-input').value.trim();
+
+      // EMVCo format
+      const guid = tlv('00', 'A000000727');
+      const ben = tlv('00', bank) + tlv('01', acc);
+      const info = tlv('01', ben) + tlv('02', 'QRIBFTTA');
+      const tag38 = tlv('38', guid + info);
+
+      let payload = tlv('00', '01') + tlv('01', amount ? '12' : '11') + tag38 + tlv('53', '704');
+      if (amount) payload += tlv('54', amount);
+      payload += tlv('58', 'VN');
+      if (msg) payload += tlv('62', tlv('08', msg.slice(0, 25)));
+      payload += '6304';
+      const checksum = crc16CCITT(payload);
+      const fullQr = payload + checksum;
+
+      document.getElementById('emvco-text').innerText = fullQr;
+      const imgUrl = `https://img.vietqr.io/image/${bank}-${acc}-compact.png?amount=${amount}&addInfo=${encodeURIComponent(msg)}`;
+      document.getElementById('qr-image').src = imgUrl;
+    }
+
+    document.getElementById('cccd-input').addEventListener('input', renderCCCD);
+    renderCCCD();
+  </script>
+</body>
+</html>
