@@ -56,3 +56,17 @@ jobs:
           npm install
           npm test
           npm run build
+
+      - name: Test vn-tax-id-validator
+        run: |
+          cd packages/vn-tax-id-validator
+          npm install
+          npm test
+          npm run build
+
+      - name: Test vn-phone-carrier
+        run: |
+          cd packages/vn-phone-carrier
+          npm install
+          npm test
+          npm run build
