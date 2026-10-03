@@ -43,6 +43,7 @@ Toàn bộ hệ sinh thái được thiết kế và tối ưu với các chuẩ
 - **W3C `beforeinput` Event Interception (Zero Flicker)**: Chặn đứng ký tự không hợp lệ trước khi trình duyệt kịp render vào DOM, triệt tiêu hoàn toàn hiện tượng rung/giật khung hình (flicker).
 - **Tối ưu Bàn Phím Ảo Di Động**: Tự động kích hoạt `inputmode="numeric"` hoặc `inputmode="decimal"` trên iOS Safari và Android Chrome, vô hiệu hóa tự động sửa lỗi chính tả phiền phức.
 - **Điều hướng thông minh (Smart Stepping)**: Phím mũi tên tự động bước qua dấu chấm/phẩy; nhấn Backspace sát dấu phân cách sẽ xóa thẳng số đứng trước thay vì kẹt lại.
+- 👉 **[Xem hướng dẫn tích hợp chi tiết vào input (HTML, React, Vue, Web Component)](./packages/realtime-number-mask/README.md#-%C4%91i%E1%BB%83m-nh%E1%BA%A5n-c%C3%B4ng-ngh%E1%BB%87--tr%E1%BA%A3i-nghi%E1%BB%87m-l%E1%BA%ADp-tr%C3%ACnh-vi%C3%AAn)**.
 
 ### 2. `@llein/vn-cccd-parser` (v1.1.0) — Căn Cước Công Dân & CMND 9 Số
 - **Hỗ trợ CMND 9 số kế thừa (`parseCMND`, `isValidCMND`)**: Tích hợp danh mục mã tỉnh 9 số của 63 tỉnh thành trước thời kỳ CCCD 12 số.

@@ -35,125 +35,254 @@
 
 ---
 
-## 📦 Installation
+## 📦 Cài Đặt (Installation)
 
 ```bash
 npm install @llein/realtime-number-mask
+# hoặc dùng yarn, pnpm, bun:
+# pnpm add @llein/realtime-number-mask
 ```
 
 ---
 
-## 🛠️ Usage
+## 📖 Hướng Dẫn Tích Hợp Chi Tiết Vào Input (Step-by-Step Integration Guide)
 
-### 1. Vanilla HTML / JavaScript (DOM Attachment)
+### 🌟 Cách 1: HTML Thuần / JavaScript / PHP / Laravel (Gắn vào thẻ `<input>` có sẵn)
+
+Gắn trực tiếp vào bất kỳ thẻ `<input>` nào trên trang web để kích hoạt định dạng tiền tệ / số tự động:
 
 ```html
-<input id="price-input" type="text" placeholder="Nhập số tiền..." />
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <title>Tích hợp Input Mask</title>
+</head>
+<body>
 
-<script type="module">
-  import { attachNumberMask, VIETNAM_VND_PRESET } from '@llein/realtime-number-mask';
+  <!-- Thẻ input của bạn -->
+  <label for="price">Số tiền nạp ví:</label>
+  <input id="price" type="text" placeholder="VD: 1.000.000 ₫" />
 
-  const input = document.getElementById('price-input');
+  <button id="btn-submit">Xác nhận thanh toán</button>
 
-  // Attach mask to input
-  const mask = attachNumberMask(input, {
-    ...VIETNAM_VND_PRESET,
-    onChange: (details) => {
-      console.log('Formatted:', details.formatted);       // "1.500.000 ₫"
-      console.log('Raw string:', details.raw);             // "1500000"
-      console.log('Numeric value:', details.numericValue); // 1500000
-      console.log('BigInt value:', details.bigIntValue);   // 1500000n
-    }
-  });
+  <script type="module">
+    import { attachNumberMask, VIETNAM_VND_PRESET } from './node_modules/@llein/realtime-number-mask/dist/index.mjs';
+    // Hoặc import { attachNumberMask, VIETNAM_VND_PRESET } from '@llein/realtime-number-mask';
 
-  // Programmatically set value
-  mask.setValue(2500000);
+    const input = document.getElementById('price');
 
-  // Clean up when removing input
-  // mask.destroy();
-</script>
+    // 1. Kích hoạt mask trên thẻ input
+    const mask = attachNumberMask(input, {
+      ...VIETNAM_VND_PRESET, // Dấu chấm nghìn, hậu tố " ₫"
+      onChange: (detail) => {
+        console.log('Hiển thị trên input:', detail.formatted);   // "1.500.000 ₫"
+        console.log('Chuỗi số sạch (raw):', detail.raw);          // "1500000"
+        console.log('Số nguyên gửi API:', detail.numericValue);   // 1500000
+      }
+    });
+
+    // 2. Gán giá trị ban đầu bằng code (nếu cần):
+    mask.setValue(2500000); // Tự format thành: "2.500.000 ₫"
+
+    // 3. Khi submit form, lấy số chuẩn để gửi lên Backend:
+    document.getElementById('btn-submit').addEventListener('click', () => {
+      const amountToSend = mask.getNumericValue(); // 2500000 (number)
+      fetch('/api/payment', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ amount: amountToSend })
+      });
+    });
+  </script>
+</body>
+</html>
 ```
 
-### 2. Autonomous Web Component (`<realtime-number-input>`)
+---
 
-Works in any framework (React, Vue, Svelte, Angular, Solid) or plain HTML without wrapper libraries:
+### 🚀 Cách 2: Dùng Autonomous Web Component `<realtime-number-input>` (0 Boilerplate)
+
+Chỉ cần import script 1 lần, bạn có thể dùng thẻ `<realtime-number-input>` trực tiếp trong **HTML, React, Vue, Svelte, Angular, Astro**:
 
 ```html
 <script type="module" src="node_modules/@llein/realtime-number-mask/dist/index.mjs"></script>
 
-<!-- Vietnamese Currency -->
-<realtime-number-input
-  thousand-separator="."
-  suffix=" ₫"
-  value="1000000"
-></realtime-number-input>
+<!-- Định dạng tiền VND -->
+<realtime-number-input 
+  id="my-vnd-input"
+  thousand-separator="." 
+  suffix=" ₫" 
+  value="1500000">
+</realtime-number-input>
 
-<!-- US Currency with 2 decimals -->
-<realtime-number-input
+<!-- Định dạng USD có 2 số thập phân -->
+<realtime-number-input 
   locale="en-US"
-  precision="2"
-  prefix="$"
-  value="1500.50"
-></realtime-number-input>
+  precision="2" 
+  prefix="$" 
+  value="1250.50">
+</realtime-number-input>
+
+<script>
+  const el = document.getElementById('my-vnd-input');
+  
+  el.addEventListener('change', (e) => {
+    console.log('Số tiền thực tế:', el.numericValue); // 1500000 (number)
+    console.log('Chuỗi số thô:', el.value);            // "1500000" (string)
+  });
+</script>
 ```
 
-### 3. Headless React / Controlled Component (`createNumberMaskState`)
+---
+
+### ⚛️ Cách 3: Tích hợp vào React / Next.js (Component `<MoneyInput />`)
+
+Tạo một component tái sử dụng mượt mà, dùng `ref` để đạt hiệu năng tối đa (không lo re-render lag):
 
 ```tsx
-import React, { useState } from 'react';
-import { createNumberMaskState } from '@llein/realtime-number-mask';
+import React, { useEffect, useRef } from 'react';
+import { attachNumberMask, NumberMaskOptions, VIETNAM_VND_PRESET } from '@llein/realtime-number-mask';
 
-const maskState = createNumberMaskState({ thousandSeparator: ',', precision: 0 });
+interface MoneyInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+  onValueChange?: (numericValue: number, rawString: string) => void;
+  options?: NumberMaskOptions;
+}
 
-export function CurrencyInput() {
-  const [value, setValue] = useState('');
+export function MoneyInput({ onValueChange, options, defaultValue, ...props }: MoneyInputProps) {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const maskRef = useRef<ReturnType<typeof attachNumberMask> | null>(null);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const cursorPos = e.target.selectionStart ?? e.target.value.length;
-    const next = maskState.calculateNextState(e.target.value, cursorPos);
-    setValue(next.formatted);
-    // next.numericValue contains raw number
-  };
+  useEffect(() => {
+    if (!inputRef.current) return;
 
-  return <input value={value} onChange={handleChange} />;
+    // Gắn real-time mask vào input
+    maskRef.current = attachNumberMask(inputRef.current, {
+      ...VIETNAM_VND_PRESET,
+      ...options,
+      onChange: (details) => {
+        onValueChange?.(details.numericValue, details.raw);
+      }
+    });
+
+    if (defaultValue) {
+      maskRef.current.setValue(defaultValue);
+    }
+
+    return () => {
+      maskRef.current?.destroy();
+    };
+  }, []);
+
+  return (
+    <input
+      ref={inputRef}
+      type="text"
+      className="border rounded-lg px-3 py-2 text-right font-mono"
+      {...props}
+    />
+  );
+}
+
+// 👉 SỬ DỤNG TRONG TRANG REACT / NEXT.JS:
+export default function CheckoutPage() {
+  const [amount, setAmount] = React.useState(0);
+
+  return (
+    <div>
+      <h3>Nhập số tiền thanh toán:</h3>
+      <MoneyInput 
+        placeholder="0 ₫"
+        onValueChange={(val) => setAmount(val)} 
+      />
+      <p>Số tiền gửi backend: <b>{amount}</b> (kiểu number)</p>
+    </div>
+  );
 }
 ```
 
-### 4. Pure Functional Utilities (No DOM required)
+---
+
+### 🟢 Cách 4: Tích hợp vào Vue 3 / Nuxt 3 (Custom Directive `v-number-mask`)
+
+```vue
+<script setup>
+import { ref } from 'vue';
+import { attachNumberMask, VIETNAM_VND_PRESET } from '@llein/realtime-number-mask';
+
+// Directive tự động attach và clean up mask
+const vNumberMask = {
+  mounted(el, binding) {
+    const input = el.tagName === 'INPUT' ? el : el.querySelector('input');
+    el._mask = attachNumberMask(input, {
+      ...VIETNAM_VND_PRESET,
+      ...binding.value,
+      onChange: (details) => {
+        binding.value?.onChange?.(details);
+      }
+    });
+  },
+  unmounted(el) {
+    el._mask?.destroy();
+  }
+};
+
+const numericAmount = ref(0);
+const onAmountChange = (details) => {
+  numericAmount.value = details.numericValue;
+};
+</script>
+
+<template>
+  <div>
+    <label>Nhập tiền:</label>
+    <input 
+      v-number-mask="{ onChange: onAmountChange }" 
+      placeholder="0 ₫" 
+      class="input"
+    />
+    <p>Số nguyên: {{ numericAmount }}</p>
+  </div>
+</template>
+```
+
+---
+
+### 🛠️ Cách 5: Hàm Thuần Túy Không Cần DOM (Pure Utilities)
 
 ```typescript
 import { formatNumber, unformatNumber, getNumericValue, getLocaleSeparators, EURO_PRESET } from '@llein/realtime-number-mask';
 
-// Auto-detect separators from BCP-47 locale
+// Tự động nhận diện dấu phân cách theo chuẩn quốc gia (BCP-47)
 formatNumber(5000000, { locale: 'vi-VN' }); // "5.000.000"
 formatNumber(5000000, { locale: 'en-US' }); // "5,000,000"
 
-// Euro preset
+// Định dạng tiền Euro
 formatNumber(1500000.5, EURO_PRESET); // "€1.500.000,5"
 
-// Extract numeric values
+// Tách lấy giá trị số từ chuỗi định dạng
 unformatNumber('1.500.000 ₫'); // "1500000"
 getNumericValue('1.500.000,50 ₫', { decimalSeparator: ',' }); // 1500000.5
 ```
 
 ---
 
-## ⚙️ Options
+## ⚙️ Bảng Tùy Chọn Cấu Hình (Options Reference)
 
-| Option | Type | Default | Description |
+| Tùy chọn | Kiểu dữ liệu | Mặc định | Mô tả chi tiết |
 |---|---|:---:|---|
-| `locale` | `string` | `undefined` | BCP 47 locale tag (`'vi-VN'`, `'en-US'`, `'de-DE'`) for auto-resolving separators |
-| `thousandSeparator` | `string` | `','` | Grouping separator for thousands (e.g. `','`, `'.'`) |
-| `decimalSeparator` | `string` | `'.'` | Fraction separator for decimals |
-| `precision` | `number` | `0` | Decimal precision limit (`0` for integer / VND) |
-| `allowNegative` | `boolean` | `false` | Enable negative sign `-` support |
-| `prefix` | `string` | `''` | Fixed prefix (e.g. `'$'`, `'US$ '`) |
-| `suffix` | `string` | `''` | Fixed suffix (e.g. `' ₫'`, `' VND'`) |
-| `smartArrowNavigation` | `boolean` | `true` | Caret automatically steps over thousand separators |
-| `autoInputMode` | `boolean` | `true` | Automatically optimizes mobile virtual keyboard |
-| `max` | `number \| bigint` | `undefined` | Numerical upper boundary |
-| `min` | `number \| bigint` | `undefined` | Numerical lower boundary |
-| `onChange` | `(details) => void` | `undefined` | Real-time formatted and raw value change callback |
+| `locale` | `string` | `undefined` | Mã chuẩn BCP-47 (`'vi-VN'`, `'en-US'`, `'de-DE'`) để tự động tra cứu dấu phân cách qua ICU engine |
+| `thousandSeparator` | `string` | `','` | Dấu phân cách hàng nghìn (VD: `','` hoặc `'.'`) |
+| `decimalSeparator` | `string` | `'.'` | Dấu phân cách số thập phân (VD: `'.'` hoặc `','`) |
+| `precision` | `number` | `0` | Số chữ số thập phân tối đa cho phép (`0` cho số nguyên / tiền VND) |
+| `allowNegative` | `boolean` | `false` | Cho phép nhập số âm với dấu trừ `-` |
+| `prefix` | `string` | `''` | Tiền tố phía trước số (VD: `'$'`, `'US$ '`) |
+| `suffix` | `string` | `''` | Hậu tố phía sau số (VD: `' ₫'`, `' VND'`) |
+| `smartArrowNavigation` | `boolean` | `true` | Phím mũi tên trái/phải tự động bước qua dấu chấm/phẩy |
+| `autoInputMode` | `boolean` | `true` | Tự động kích hoạt bàn phím số (`numeric`/`decimal`) trên thiết bị di động |
+| `max` | `number \| bigint` | `undefined` | Giới hạn giá trị lớn nhất cho phép |
+| `min` | `number \| bigint` | `undefined` | Giới hạn giá trị nhỏ nhất cho phép |
+| `onChange` | `(details) => void` | `undefined` | Callback nhận giá trị định dạng, chuỗi thô, và giá trị số `numericValue` |
 
 ---
 
