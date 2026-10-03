@@ -5,6 +5,7 @@ import {
   getNumericValue,
   getBigIntValue,
   attachNumberMask,
+  createNumberMaskState,
   VIETNAM_VND_PRESET,
   INTERNATIONAL_USD_PRESET
 } from './index';
@@ -99,8 +100,22 @@ describe('realtime-number-mask', () => {
           this.selectionStart = cursorAt ?? newVal.length;
           this.selectionEnd = cursorAt ?? newVal.length;
           listeners['input']?.forEach((cb) => cb(new Event('input')));
+        },
+        triggerKeyDown(key: string) {
+          const event = { key, defaultPrevented: false, preventDefault() { this.defaultPrevented = true; } };
+          listeners['keydown']?.forEach((cb) => cb(event));
+          return event;
+        },
+        triggerBeforeInput(data: string) {
+          const event = { data, inputType: 'insertText', defaultPrevented: false, preventDefault() { this.defaultPrevented = true; } };
+          listeners['beforeinput']?.forEach((cb) => cb(event));
+          return event;
         }
-      } as unknown as HTMLInputElement & { triggerInput: (v: string, c?: number) => void };
+      } as unknown as HTMLInputElement & {
+        triggerInput: (v: string, c?: number) => void;
+        triggerKeyDown: (k: string) => { defaultPrevented: boolean };
+        triggerBeforeInput: (d: string) => { defaultPrevented: boolean };
+      };
     }
 
     it('should format on real-time typing', () => {
@@ -138,6 +153,30 @@ describe('realtime-number-mask', () => {
       });
     });
 
+    it('should pre-filter invalid characters via beforeinput', () => {
+      const input = createMockInput('100');
+      attachNumberMask(input, { thousandSeparator: ',' });
+
+      // Valid digit
+      const validEvent = input.triggerBeforeInput('5');
+      expect(validEvent.defaultPrevented).toBe(false);
+
+      // Invalid letter
+      const invalidEvent = input.triggerBeforeInput('abc');
+      expect(invalidEvent.defaultPrevented).toBe(true);
+    });
+
+    it('should step over thousand separators when pressing ArrowLeft and ArrowRight', () => {
+      const input = createMockInput('1,000');
+      attachNumberMask(input, { thousandSeparator: ',', smartArrowNavigation: true });
+
+      // Cursor is at pos 2 (right after comma: "1,|000")
+      input.selectionStart = 2;
+      const leftEvent = input.triggerKeyDown('ArrowLeft');
+      expect(leftEvent.defaultPrevented).toBe(true);
+      expect(input.selectionStart).toBe(0); // Jumped over comma to before comma!
+    });
+
     it('should support controller.setValue and controller.destroy', () => {
       const input = createMockInput();
       const controller = attachNumberMask(input, { thousandSeparator: ',' });
@@ -146,6 +185,18 @@ describe('realtime-number-mask', () => {
       expect(input.value).toBe('9,876,543');
 
       controller.destroy();
+    });
+  });
+
+  describe('createNumberMaskState (Headless React / Framework Helper)', () => {
+    it('should calculate next formatted state and cursor position for controlled components', () => {
+      const state = createNumberMaskState({ thousandSeparator: ',' });
+
+      const next = state.calculateNextState('1000', 4);
+      expect(next.formatted).toBe('1,000');
+      expect(next.cursor).toBe(5);
+      expect(next.raw).toBe('1000');
+      expect(next.numericValue).toBe(1000);
     });
   });
 });
