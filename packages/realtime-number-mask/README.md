@@ -25,6 +25,16 @@
 
 ---
 
+## 🇻🇳 Điểm Nhấn Công Nghệ & Trải Nghiệm Lập Trình Viên
+
+- **Format số tự động thời gian thực (Real-time Masking)**: Khi người dùng gõ phím, chuỗi số tự động được phân tách hàng nghìn (`1,000,000` hoặc `1.000.000 ₫`) mượt mà không có độ trễ.
+- **Giữ vị trí con trỏ chuột tuyệt đối (Flawless Caret Preservation)**: Áp dụng thuật toán **$O(1)$ TypedArray Projection Matrix**, khi người dùng xóa hoặc chèn thêm số vào giữa hay đầu chuỗi, con trỏ chuột sẽ giữ nguyên đúng vị trí logic của con số đang gõ thay vì bị văng/nhảy về cuối ô nhập liệu như các thư viện thông thường.
+- **Tương thích toàn bộ Framework qua Web Component**: Không cần cài thêm wrapper cho React, Vue, Svelte hay Angular. Chỉ cần dùng thẻ `<realtime-number-input>` là có ngay input xịn sò với 0 dependencies.
+- **Zero Flicker với W3C `beforeinput`**: Chặn các ký tự không hợp lệ (chữ cái, ký tự lạ) trước khi kịp render vào DOM.
+- **Tối ưu Mobile Keypad**: Tự động mở bàn phím số (numeric/decimal keypad) trên điện thoại và tắt gợi ý từ rườm rà.
+
+---
+
 ## 📦 Installation
 
 ```bash
