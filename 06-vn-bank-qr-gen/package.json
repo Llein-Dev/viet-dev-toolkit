@@ -1,6 +1,6 @@
 {
   "name": "@llein/vn-bank-qr-gen",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Ultra-lightweight generator for VietQR (NAPAS 247) EMVCo payment payloads and quick-link QR URLs.",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
@@ -34,6 +34,15 @@
   ],
   "author": "llein",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Llein-Dev/viet-dev-toolkit.git",
+    "directory": "06-vn-bank-qr-gen"
+  },
+  "homepage": "https://github.com/Llein-Dev/viet-dev-toolkit#readme",
+  "bugs": {
+    "url": "https://github.com/Llein-Dev/viet-dev-toolkit/issues"
+  },
   "devDependencies": {
     "tsup": "^8.3.5",
     "typescript": "^5.7.2",
