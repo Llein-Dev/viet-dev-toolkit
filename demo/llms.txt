@@ -190,15 +190,17 @@ All packages are strictly **zero-dependency**, lightweight (< 5KB), and export d
 
 ## 8. @llein/realtime-number-mask
 - **Install**: `npm install @llein/realtime-number-mask`
-- **Purpose**: Real-time number & currency input mask with flawless cursor position preservation for HTML `<input>` elements and web forms.
+- **Purpose**: Ultra-modern, zero-dependency real-time number & currency input mask with $O(1)$ Virtual Caret Projection Matrix, native `Intl` locale auto-detection, and Autonomous Web Component `<realtime-number-input>`.
 - **Key APIs**:
   - `attachNumberMask(input: HTMLInputElement, options?: NumberMaskOptions): MaskController`
   - `formatNumber(value: string | number | bigint, options?: NumberMaskOptions): string`
-  - `unformatNumber(value: string, options?: NumberMaskOptions): string`
-  - `getNumericValue(value: string, options?: NumberMaskOptions): number`
-  - `getBigIntValue(value: string, options?: NumberMaskOptions): bigint | null`
-  - `VIETNAM_VND_PRESET: NumberMaskOptions`
-  - `INTERNATIONAL_USD_PRESET: NumberMaskOptions`
+  - `unformatNumber(value: string | number | bigint, options?: NumberMaskOptions): string`
+  - `getNumericValue(value: string | number | bigint, options?: NumberMaskOptions): number`
+  - `getBigIntValue(value: string | number | bigint, options?: NumberMaskOptions): bigint | null`
+  - `getLocaleSeparators(locale?: string): { thousandSep: string; decimalSep: string }`
+  - `createNumberMaskState(options?: NumberMaskOptions): HeadlessStateController`
+  - `registerWebComponent(tagName?: string): void` (Registers `<realtime-number-input>`)
+  - `VIETNAM_VND_PRESET`, `INTERNATIONAL_USD_PRESET`, `EURO_PRESET`
 - **Example**:
   ```typescript
   import { attachNumberMask, VIETNAM_VND_PRESET } from '@llein/realtime-number-mask';
@@ -212,6 +214,9 @@ All packages are strictly **zero-dependency**, lightweight (< 5KB), and export d
       console.log(details.numericValue); // 1500000
     }
   });
+
+  // Web Component Usage (Zero-dependency in React, Vue, Svelte, or HTML):
+  // <realtime-number-input thousand-separator="." suffix=" ₫" value="1000000"></realtime-number-input>
   ```
 
 ---
