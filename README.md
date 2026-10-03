@@ -134,6 +134,10 @@ npm run publish
 # 5. Nhận diện nhà mạng Viettel/Vina/Mobi, chuyển mạng giữ số & format E.164
 cd d:\DAT-IT\FREELANCE\NPM\packages\vn-phone-carrier
 npm run publish
+
+# 6. Auto mask số & tiền tệ thời gian thực cho input (giữ con trỏ chuột)
+cd d:\DAT-IT\FREELANCE\NPM\packages\realtime-number-mask
+npm run publish
 ```
 
 ---

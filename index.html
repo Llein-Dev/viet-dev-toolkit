@@ -204,13 +204,33 @@
         </h2>
         <div class="space-y-4">
           <div>
-            <label class="block text-xs font-medium text-slate-400 mb-1">Số tiền số nguyên hoặc BigInt:</label>
+            <div class="flex justify-between items-center mb-1">
+              <label class="text-xs font-semibold text-amber-300 flex items-center gap-1.5">
+                <i class="fa-solid fa-wand-magic-sparkles text-emerald-400"></i> Auto Real-time Input Mask:
+              </label>
+              <span class="text-[10px] text-emerald-400 font-mono bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
+                Cursor-Safe ✅
+              </span>
+            </div>
             <input
               id="currency-input"
               type="text"
-              value="1500000"
-              class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-100 font-mono tracking-wider text-xl focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500"
+              value="1,500,000"
+              placeholder="Gõ số tiền bất kỳ..."
+              class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-100 font-mono tracking-wider text-xl focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 shadow-inner"
             />
+          </div>
+
+          <!-- Format selector & Raw Value -->
+          <div class="p-3 bg-slate-900/90 rounded-xl border border-slate-700/60 text-xs flex flex-wrap justify-between items-center gap-2">
+            <div class="flex items-center gap-2">
+              <span class="text-slate-400">Định dạng gõ:</span>
+              <button id="btn-mask-comma" onclick="setMaskStyle(',')" class="px-2 py-1 rounded bg-amber-600 text-white font-mono font-medium shadow">1,000,000 (Phẩy)</button>
+              <button id="btn-mask-dot" onclick="setMaskStyle('.')" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 font-mono font-medium border border-slate-700">1.000.000 (Chấm)</button>
+            </div>
+            <div class="text-slate-400">
+              Raw Value: <code id="raw-currency-val" class="text-emerald-400 font-mono font-bold">1500000</code>
+            </div>
           </div>
 
           <div class="flex flex-wrap gap-2">
@@ -258,7 +278,7 @@
 
           <div class="space-y-4">
             <div class="p-4 bg-slate-900 rounded-xl border border-slate-700/60">
-              <div class="text-[11px] text-slate-400 uppercase font-mono">Định dạng số chuẩn (VND):</div>
+              <div class="text-[11px] text-slate-400 uppercase font-mono">Định dạng chuẩn (VND):</div>
               <div id="formatted-vnd" class="text-2xl font-bold font-mono text-emerald-400 mt-1">1.500.000 ₫</div>
             </div>
 
@@ -272,8 +292,8 @@
         </div>
 
         <div class="mt-4 pt-4 border-t border-slate-700 text-xs text-slate-400 flex items-center justify-between">
-          <span>Package: <code class="text-amber-400">@llein/vn-currency-words</code></span>
-          <span class="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-mono">Trillions & BigInt Ready ✅</span>
+          <span>Packages: <code class="text-amber-400">@llein/vn-currency-words</code> & <code class="text-emerald-400">@llein/realtime-number-mask</code></span>
+          <span class="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-mono">Real-time Masked ✅</span>
         </div>
       </div>
     </div>
@@ -649,18 +669,78 @@
       return res.charAt(0).toUpperCase() + res.slice(1);
     }
 
-    function setCurrency(val) {
-      document.getElementById('currency-input').value = val;
+    let currentMaskSep = ',';
+
+    function setMaskStyle(sep) {
+      currentMaskSep = sep;
+      const btnComma = document.getElementById('btn-mask-comma');
+      const btnDot = document.getElementById('btn-mask-dot');
+      if (sep === ',') {
+        btnComma.className = 'px-2 py-1 rounded bg-amber-600 text-white font-mono font-medium shadow';
+        btnDot.className = 'px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 font-mono font-medium border border-slate-700';
+      } else {
+        btnDot.className = 'px-2 py-1 rounded bg-amber-600 text-white font-mono font-medium shadow';
+        btnComma.className = 'px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 font-mono font-medium border border-slate-700';
+      }
+      applyCurrencyMask();
+    }
+
+    function applyCurrencyMask(targetCursor) {
+      const input = document.getElementById('currency-input');
+      const val = input.value;
+      const curPos = targetCursor ?? input.selectionStart ?? val.length;
+
+      // Count digits before cursor
+      let digitsBefore = 0;
+      for (let i = 0; i < curPos; i++) {
+        if (val[i] >= '0' && val[i] <= '9') digitsBefore++;
+      }
+
+      // Extract raw digits
+      const raw = val.replace(/\D/g, '').replace(/^0+(?=\d)/, '');
+      document.getElementById('raw-currency-val').innerText = raw || '0';
+
+      if (!raw) {
+        input.value = '';
+        renderCurrencyWords();
+        return;
+      }
+
+      // Format with current thousand separator
+      const formatted = raw.replace(/\B(?=(\d{3})+(?!\d))/g, currentMaskSep);
+      input.value = formatted;
+
+      // Restore exact cursor position
+      let newCursor = 0;
+      let count = 0;
+      for (let i = 0; i < formatted.length; i++) {
+        if (formatted[i] >= '0' && formatted[i] <= '9') count++;
+        if (count === digitsBefore) {
+          newCursor = i + 1;
+          break;
+        }
+      }
+      if (digitsBefore === 0) newCursor = 0;
+      input.setSelectionRange(newCursor, newCursor);
+
       renderCurrencyWords();
     }
 
+    function setCurrency(val) {
+      const input = document.getElementById('currency-input');
+      input.value = String(val);
+      applyCurrencyMask();
+    }
+
     function renderCurrencyWords() {
-      const raw = document.getElementById('currency-input').value.trim();
+      const inputVal = document.getElementById('currency-input').value;
+      const raw = inputVal.replace(/\D/g, '');
       const dialect = document.getElementById('dialect-select').value;
       const suffix = document.getElementById('suffix-select').value;
 
-      const cleanNum = raw.replace(/[^0-9]/g, '');
-      const formatted = cleanNum ? Number(cleanNum).toLocaleString('vi-VN') + ' ₫' : '0 ₫';
+      document.getElementById('raw-currency-val').innerText = raw || '0';
+
+      const formatted = raw ? Number(raw).toLocaleString('vi-VN') + ' ₫' : '0 ₫';
       document.getElementById('formatted-vnd').innerText = formatted;
 
       const text = toWords(raw, dialect, suffix);
@@ -958,11 +1038,25 @@
     }
 
     document.getElementById('cccd-input').addEventListener('input', renderCCCD);
-    document.getElementById('currency-input').addEventListener('input', renderCurrencyWords);
+    
+    const currInput = document.getElementById('currency-input');
+    currInput.addEventListener('input', () => applyCurrencyMask());
+    currInput.addEventListener('keydown', (e) => {
+      const pos = currInput.selectionStart;
+      if (e.key === 'Backspace' && pos > 0) {
+        if (currInput.value[pos - 1] === currentMaskSep) {
+          e.preventDefault();
+          currInput.value = currInput.value.slice(0, pos - 2) + currInput.value.slice(pos);
+          applyCurrencyMask(pos - 2);
+        }
+      }
+    });
+
     document.getElementById('plate-input').addEventListener('input', renderPlate);
     document.getElementById('tax-input').addEventListener('input', renderTax);
     document.getElementById('phone-input').addEventListener('input', renderPhone);
     renderCCCD();
+    applyCurrencyMask();
     renderPlate();
     renderTax();
     renderPhone();

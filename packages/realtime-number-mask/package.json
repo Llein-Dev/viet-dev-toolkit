@@ -1,0 +1,54 @@
+{
+  "name": "@llein/realtime-number-mask",
+  "version": "1.0.0",
+  "description": "Zero-dependency real-time number and currency input mask with flawless cursor position preservation for HTML inputs and web forms.",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Llein-Dev/viet-dev-toolkit.git",
+    "directory": "packages/realtime-number-mask"
+  },
+  "homepage": "https://github.com/Llein-Dev/viet-dev-toolkit#readme",
+  "bugs": {
+    "url": "https://github.com/Llein-Dev/viet-dev-toolkit/issues"
+  },
+  "scripts": {
+    "build": "tsup src/index.ts --format cjs,esm --dts --clean",
+    "dev": "tsup src/index.ts --format cjs,esm --watch --dts",
+    "test": "vitest run --passWithNoTests",
+    "publish": "npm publish --access public",
+    "pub": "npm publish --access public",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "utility",
+    "zero-dependency",
+    "typescript",
+    "input-mask",
+    "number-mask",
+    "currency-input",
+    "realtime-format",
+    "cursor-preservation",
+    "vietnam",
+    "vnd"
+  ],
+  "author": "llein",
+  "license": "MIT",
+  "devDependencies": {
+    "tsup": "^8.3.5",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  }
+}
