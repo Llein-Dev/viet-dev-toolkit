@@ -70,3 +70,17 @@ jobs:
           npm install
           npm test
           npm run build
+
+      - name: Test realtime-number-mask
+        run: |
+          cd packages/realtime-number-mask
+          npm install
+          npm test
+          npm run build
+
+      - name: Test keyboard-shortcut-listener
+        run: |
+          cd packages/keyboard-shortcut-listener
+          npm install
+          npm test
+          npm run build
