@@ -136,66 +136,62 @@ Chỉ cần import script 1 lần, bạn có thể dùng thẻ `<realtime-number
 
 ---
 
-### ⚛️ Cách 3: Tích hợp vào React / Next.js (Component `<MoneyInput />`)
+### ⚛️ Cách 3: React / Next.js với Custom Hook Chính Chủ `useNumberMask`
 
-Tạo một component tái sử dụng mượt mà, dùng `ref` để đạt hiệu năng tối đa (không lo re-render lag):
+Thư viện tích hợp sẵn **Custom Hook `useNumberMask`** chính chủ. Chỉ cần 1 dòng gọi hook là có ngay `ref`, `numericValue`, `formattedValue`, và hàm `setValue`:
 
 ```tsx
-import React, { useEffect, useRef } from 'react';
-import { attachNumberMask, NumberMaskOptions, VIETNAM_VND_PRESET } from '@llein/realtime-number-mask';
+import React from 'react';
+import { useNumberMask } from '@llein/realtime-number-mask/react';
+// Hoặc import { useNumberMask } from '@llein/realtime-number-mask';
+import { VIETNAM_VND_PRESET } from '@llein/realtime-number-mask';
 
-interface MoneyInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  onValueChange?: (numericValue: number, rawString: string) => void;
-  options?: NumberMaskOptions;
-}
-
-export function MoneyInput({ onValueChange, options, defaultValue, ...props }: MoneyInputProps) {
-  const inputRef = useRef<HTMLInputElement>(null);
-  const maskRef = useRef<ReturnType<typeof attachNumberMask> | null>(null);
-
-  useEffect(() => {
-    if (!inputRef.current) return;
-
-    // Gắn real-time mask vào input
-    maskRef.current = attachNumberMask(inputRef.current, {
-      ...VIETNAM_VND_PRESET,
-      ...options,
-      onChange: (details) => {
-        onValueChange?.(details.numericValue, details.raw);
-      }
-    });
-
-    if (defaultValue) {
-      maskRef.current.setValue(defaultValue);
-    }
-
-    return () => {
-      maskRef.current?.destroy();
-    };
-  }, []);
-
-  return (
-    <input
-      ref={inputRef}
-      type="text"
-      className="border rounded-lg px-3 py-2 text-right font-mono"
-      {...props}
-    />
-  );
-}
-
-// 👉 SỬ DỤNG TRONG TRANG REACT / NEXT.JS:
 export default function CheckoutPage() {
-  const [amount, setAmount] = React.useState(0);
+  const { 
+    ref,             // Gắn vào input: <input ref={ref} />
+    numericValue,    // Giá trị số thực tế: 1500000 (number)
+    formattedValue,  // Chuỗi hiển thị: "1.500.000 ₫"
+    rawValue,        // Chuỗi số sạch: "1500000"
+    setValue,        // Hàm gán giá trị bằng code: setValue(5000000)
+    clear            // Hàm xóa rỗng: clear()
+  } = useNumberMask({
+    ...VIETNAM_VND_PRESET,
+    defaultValue: 1500000,
+    onChange: (details) => {
+      console.log('Người dùng gõ:', details.numericValue);
+    }
+  });
+
+  const handlePay = () => {
+    // Gửi numericValue lên API:
+    fetch('/api/checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ amount: numericValue })
+    });
+  };
 
   return (
-    <div>
-      <h3>Nhập số tiền thanh toán:</h3>
-      <MoneyInput 
+    <div className="space-y-4 p-6 max-w-md mx-auto">
+      <label className="block text-sm font-semibold">Nhập số tiền chuyển khoản:</label>
+      
+      {/* 🚀 GẮN REF VÀO INPUT LÀ XONG! */}
+      <input
+        ref={ref}
         placeholder="0 ₫"
-        onValueChange={(val) => setAmount(val)} 
+        className="w-full border rounded-xl px-4 py-3 text-lg font-mono text-right"
       />
-      <p>Số tiền gửi backend: <b>{amount}</b> (kiểu number)</p>
+
+      <div className="flex justify-between text-sm text-gray-500">
+        <span>Số tiền API nhận: <b>{numericValue.toLocaleString('vi-VN')} VND</b></span>
+        <button onClick={() => setValue(5000000)} className="text-blue-500 underline">
+          Gán nhanh 5 Tr
+        </button>
+      </div>
+
+      <button onClick={handlePay} className="w-full bg-emerald-600 text-white py-3 rounded-xl">
+        Thanh toán
+      </button>
     </div>
   );
 }

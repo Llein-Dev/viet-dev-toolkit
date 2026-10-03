@@ -9,6 +9,7 @@ import {
   getLocaleSeparators,
   buildCaretProjection,
   registerWebComponent,
+  useNumberMask,
   VIETNAM_VND_PRESET,
   INTERNATIONAL_USD_PRESET,
   EURO_PRESET
@@ -260,5 +261,49 @@ describe('realtime-number-mask', () => {
       expect(() => registerWebComponent('test-number-input')).not.toThrow();
     });
   });
+
+  describe('useNumberMask (Universal Hook / Ref Callback)', () => {
+    it('should bind to input element via ref callback and format value', () => {
+      const hook = useNumberMask({
+        thousandSeparator: '.',
+        suffix: ' ₫',
+        defaultValue: 1500000
+      });
+
+      const mockInput = {
+        value: '',
+        selectionStart: 0,
+        selectionEnd: 0,
+        inputMode: '',
+        setAttribute(name: string, value: string) {},
+        setSelectionRange(s: number, e: number) {},
+        addEventListener(e: string, h: any) {},
+        removeEventListener(e: string, h: any) {},
+        dispatchEvent(e: any) { return true; }
+      } as unknown as HTMLInputElement;
+
+      // Mount via ref callback
+      hook.ref(mockInput);
+
+      expect(mockInput.value).toBe('1.500.000 ₫');
+      expect(hook.getNumericValue()).toBe(1500000);
+      expect(hook.getRawValue()).toBe('1500000');
+      expect(hook.getFormattedValue()).toBe('1.500.000 ₫');
+
+      // Set new value
+      hook.setValue(5000000);
+      expect(mockInput.value).toBe('5.000.000 ₫');
+      expect(hook.getNumericValue()).toBe(5000000);
+
+      // Clear value
+      hook.clear();
+      expect(hook.getNumericValue()).toBe(0);
+
+      // Unmount
+      hook.ref(null);
+      expect(hook.getController()).toBeNull();
+    });
+  });
 });
+
 

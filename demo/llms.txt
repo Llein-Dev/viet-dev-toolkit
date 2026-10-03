@@ -198,6 +198,7 @@ All packages are strictly **zero-dependency**, lightweight (< 5KB), and export d
   - `getNumericValue(value: string | number | bigint, options?: NumberMaskOptions): number`
   - `getBigIntValue(value: string | number | bigint, options?: NumberMaskOptions): bigint | null`
   - `getLocaleSeparators(locale?: string): { thousandSep: string; decimalSep: string }`
+  - `useNumberMask(options?: UseNumberMaskOptions): HookResult` (Universal / React Custom Hook)
   - `createNumberMaskState(options?: NumberMaskOptions): HeadlessStateController`
   - `registerWebComponent(tagName?: string): void` (Registers `<realtime-number-input>`)
   - `VIETNAM_VND_PRESET`, `INTERNATIONAL_USD_PRESET`, `EURO_PRESET`
@@ -214,6 +215,11 @@ All packages are strictly **zero-dependency**, lightweight (< 5KB), and export d
       console.log(details.numericValue); // 1500000
     }
   });
+
+  // React Custom Hook Usage:
+  // import { useNumberMask } from '@llein/realtime-number-mask/react';
+  // const { ref, numericValue, setValue } = useNumberMask({ ...VIETNAM_VND_PRESET, defaultValue: 1000000 });
+  // return <input ref={ref} />;
 
   // Web Component Usage (Zero-dependency in React, Vue, Svelte, or HTML):
   // <realtime-number-input thousand-separator="." suffix=" ₫" value="1000000"></realtime-number-input>

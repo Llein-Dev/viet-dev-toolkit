@@ -742,3 +742,74 @@ export function registerWebComponent(tagName = 'realtime-number-input'): void {
 if (typeof window !== 'undefined' && typeof customElements !== 'undefined') {
   registerWebComponent();
 }
+
+export interface UseNumberMaskOptions extends NumberMaskOptions {
+  /** Initial numerical or formatted value */
+  defaultValue?: string | number | bigint;
+}
+
+export interface UniversalNumberMaskHook<T extends HTMLInputElement = HTMLInputElement> {
+  /**
+   * Universal Ref Callback compatible with React (<input ref={mask.ref} />),
+   * Vue, Svelte, Solid, or vanilla JavaScript.
+   */
+  ref: (node: T | null) => void;
+  setValue: (value: string | number | bigint) => void;
+  clear: () => void;
+  getRawValue: () => string;
+  getNumericValue: () => number;
+  getBigIntValue: () => bigint | null;
+  getFormattedValue: () => string;
+  getController: () => MaskController | null;
+}
+
+/**
+ * Universal Zero-Dependency Hook compatible with React, Vue, Svelte, or Vanilla JS.
+ *
+ * @example React Usage:
+ * ```tsx
+ * import { useNumberMask, VIETNAM_VND_PRESET } from '@llein/realtime-number-mask';
+ *
+ * function PriceInput() {
+ *   const mask = useNumberMask({ ...VIETNAM_VND_PRESET, defaultValue: 1000000 });
+ *   return <input ref={mask.ref} />;
+ * }
+ * ```
+ */
+export function useNumberMask<T extends HTMLInputElement = HTMLInputElement>(
+  options: UseNumberMaskOptions = {}
+): UniversalNumberMaskHook<T> {
+  let inputNode: T | null = null;
+  let controller: MaskController | null = null;
+
+  const ref = (node: T | null) => {
+    if (node) {
+      inputNode = node;
+      controller = attachNumberMask(node, options);
+      if (options.defaultValue !== undefined && options.defaultValue !== null) {
+        controller.setValue(options.defaultValue);
+      }
+    } else {
+      controller?.destroy();
+      controller = null;
+      inputNode = null;
+    }
+  };
+
+  return {
+    ref,
+    setValue: (val: string | number | bigint) => controller?.setValue(val),
+    clear: () => {
+      if (inputNode) {
+        inputNode.value = '';
+        controller?.setValue('');
+      }
+    },
+    getRawValue: () => controller?.getRawValue() ?? '',
+    getNumericValue: () => controller?.getNumericValue() ?? 0,
+    getBigIntValue: () => controller?.getBigIntValue() ?? null,
+    getFormattedValue: () => controller?.getFormattedValue() ?? '',
+    getController: () => controller
+  };
+}
+
