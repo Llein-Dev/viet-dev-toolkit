@@ -97,7 +97,7 @@ Trải nghiệm trực quan ngay trên trình duyệt không cần cài đặt:
 | # | Thư mục / Tên Package | Mô tả ngắn | Trạng thái |
 |---|---|---|:---:|
 | **41** | [`rtsp-url-builder`](./41-rtsp-url-builder) | Construct standardized RTSP video streaming URLs for major IP camera brands (Hikvision, Dahua, KBVision, Imou, Uniview). | Ready ✅ |
-| **42** | [`@llein/anpr-plate-cleaner`](./42-anpr-plate-cleaner) | Post-processing text cleaner for License Plate OCR (ANPR) resolving character confusions like 0 vs O, 1 vs I, 8 vs B based on position rules. | Ready ✅ |
+| **42** | [`@llein/anpr-plate-cleaner`](./anpr-plate-cleaner) | Post-processing text cleaner for License Plate OCR (ANPR) resolving character confusions like 0 vs O, 1 vs I, 8 vs B based on position rules. | Ready ✅ |
 | **43** | [`serial-com-buffer-parser`](./43-serial-com-buffer-parser) | Packet framer and buffer parser for Serial/COM/RS232/RS485 data streams using STX (0x02) and ETX (0x03) delimiters. | Ready ✅ |
 | **44** | [`bounding-box-scaler`](./44-bounding-box-scaler) | Transform and scale bounding boxes between original video/camera resolution and browser canvas/screen display dimensions. | Ready ✅ |
 | **45** | [`mjpeg-stream-reader`](./45-mjpeg-stream-reader) | Micro-client to extract individual JPEG image frames from HTTP multipart/x-mixed-replace MJPEG camera streams. | Ready ✅ |
