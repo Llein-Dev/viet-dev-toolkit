@@ -6,8 +6,12 @@ import {
   getBigIntValue,
   attachNumberMask,
   createNumberMaskState,
+  getLocaleSeparators,
+  buildCaretProjection,
+  registerWebComponent,
   VIETNAM_VND_PRESET,
-  INTERNATIONAL_USD_PRESET
+  INTERNATIONAL_USD_PRESET,
+  EURO_PRESET
 } from './index';
 
 describe('realtime-number-mask', () => {
@@ -79,6 +83,8 @@ describe('realtime-number-mask', () => {
         },
         selectionStart: selStart,
         selectionEnd: selEnd,
+        inputMode: '',
+        setAttribute(name: string, value: string) {},
         setSelectionRange(start: number, end: number) {
           this.selectionStart = start;
           this.selectionEnd = end;
@@ -199,4 +205,60 @@ describe('realtime-number-mask', () => {
       expect(next.numericValue).toBe(1000);
     });
   });
+
+  describe('getLocaleSeparators (Intl Engine)', () => {
+    it('should resolve Vietnamese locale separators', () => {
+      const { thousandSep, decimalSep } = getLocaleSeparators('vi-VN');
+      expect(thousandSep).toBe('.');
+      expect(decimalSep).toBe(',');
+    });
+
+    it('should resolve US locale separators', () => {
+      const { thousandSep, decimalSep } = getLocaleSeparators('en-US');
+      expect(thousandSep).toBe(',');
+      expect(decimalSep).toBe('.');
+    });
+
+    it('should format with EURO_PRESET', () => {
+      expect(formatNumber(1500000.5, EURO_PRESET)).toBe('€1.500.000,5');
+    });
+
+    it('should auto-detect separators when locale is passed into formatNumber', () => {
+      expect(formatNumber(5000000, { locale: 'vi-VN' })).toBe('5.000.000');
+      expect(formatNumber(5000000, { locale: 'en-US' })).toBe('5,000,000');
+    });
+  });
+
+  describe('buildCaretProjection ($O(1) TypedArray Matrix)', () => {
+    it('should map significant characters directly to string indices', () => {
+      // formatted = "1,000", digits = "1000", prefixLen = 0, suffixLen = 0
+      const isSig = (c: string) => c >= '0' && c <= '9';
+      const matrix = buildCaretProjection('1,000', 4, 0, 0, isSig);
+
+      expect(matrix instanceof Int32Array).toBe(true);
+      expect(matrix[0]).toBe(0); // Before '1'
+      expect(matrix[1]).toBe(1); // After '1', before ','
+      expect(matrix[2]).toBe(3); // After first '0'
+      expect(matrix[3]).toBe(4); // After second '0'
+      expect(matrix[4]).toBe(5); // After third '0' (end of string)
+    });
+
+    it('should handle prefix and suffix offsets correctly', () => {
+      const isSig = (c: string) => c >= '0' && c <= '9';
+      // "$1,000 ₫" -> prefix = "$", suffix = " ₫"
+      const formatted = '$1,000 ₫';
+      const matrix = buildCaretProjection(formatted, 4, 1, 2, isSig);
+
+      expect(matrix[0]).toBe(1); // Starts at prefixLen = 1
+      expect(matrix[1]).toBe(2); // After '1' (index 2)
+      expect(matrix[4]).toBe(6); // After last '0' (index 6, right before suffix)
+    });
+  });
+
+  describe('Web Component Registration', () => {
+    it('should safely execute registerWebComponent without crashing in non-browser env', () => {
+      expect(() => registerWebComponent('test-number-input')).not.toThrow();
+    });
+  });
 });
+

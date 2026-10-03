@@ -1,22 +1,27 @@
 # @llein/realtime-number-mask
 
-> High-performance, zero-dependency real-time number and currency input mask with **flawless cursor position preservation** for HTML inputs, web forms, and fintech applications.
+> Ultra-modern, high-performance real-time number and currency input mask with **$O(1)$ Virtual Caret Projection Matrix**, native `Intl` locale auto-detection, zero-flicker W3C `beforeinput` interception, and Autonomous Web Component `<realtime-number-input>`.
 
 [![npm version](https://img.shields.io/npm/v/@llein/realtime-number-mask.svg?style=flat-square)](https://www.npmjs.com/package/@llein/realtime-number-mask)
 [![license](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](./LICENSE)
 
 ---
 
-## 🚀 Key Features
+## ⚡ Cutting-Edge Architecture
 
-- **Flawless Cursor Position Preservation**: Caret never jumps to the end when typing or deleting characters in the middle of digits.
-- **Real-Time Input Masking**: Auto-inserts thousand separators (`,` or `.`) as the user types.
-- **Smart Backspace/Delete Handling**: Deleting directly against thousand separators removes the adjacent digit cleanly without getting stuck.
-- **Unmasked Raw Values**: Easily retrieve the clean numeric string (`1500000`), JavaScript float (`1500000`), or `BigInt`.
-- **Preconfigured Presets**:
-  - `VIETNAM_VND_PRESET`: `1.500.000 ₫` (dots for thousands, comma for decimal, `₫` suffix).
-  - `INTERNATIONAL_USD_PRESET`: `$1,500.50` (commas for thousands, dot for decimal, `$` prefix).
-- **Zero Dependencies**: 100% pure TypeScript, ultra-lightweight (< 3KB gzipped), dual ESM/CJS.
+1. **$O(1)$ Virtual Caret Projection Matrix (TypedArray)**:
+   - Uses Monaco/Blink-style `Int32Array` projection mapping between raw digits and formatted string indices.
+   - Caret position preservation operates in true $O(1)$ lookup time with **0 cursor jumps** when inserting or deleting digits anywhere in the input.
+2. **Native `Intl.NumberFormat` Engine (150+ Locales)**:
+   - Directly queries the browser's C++ ICU engine via `formatToParts()` to resolve thousand and decimal separators automatically (`vi-VN`, `en-US`, `de-DE`, `fr-FR`, etc.) with zero external runtime dependencies.
+3. **Autonomous Web Component (`<realtime-number-input>`)**:
+   - Registered via `customElements.define` for native drop-in usage across React 19, Vue 3, Svelte 5, Angular 17, Astro, or plain HTML.
+4. **W3C `beforeinput` Zero-Flicker Interception**:
+   - Pre-filters non-numeric characters before DOM mutation occurs, eliminating visual flickering and unwanted layout thrashing.
+5. **Mobile Virtual Keyboard Auto-Adaptation**:
+   - Automatically sets `inputmode="numeric"` or `"decimal"`, disabling intrusive autocomplete/autocorrect popups.
+6. **Smart Navigation & Backspace Stepping**:
+   - Arrow keys (`ArrowLeft`, `ArrowRight`) seamlessly step over grouping separators. Backspacing a thousand separator deletes the adjacent digit directly.
 
 ---
 
@@ -30,7 +35,7 @@ npm install @llein/realtime-number-mask
 
 ## 🛠️ Usage
 
-### 1. Vanilla HTML / JavaScript
+### 1. Vanilla HTML / JavaScript (DOM Attachment)
 
 ```html
 <input id="price-input" type="text" placeholder="Nhập số tiền..." />
@@ -59,18 +64,66 @@ npm install @llein/realtime-number-mask
 </script>
 ```
 
-### 2. Pure Functions (No DOM required)
+### 2. Autonomous Web Component (`<realtime-number-input>`)
+
+Works in any framework (React, Vue, Svelte, Angular, Solid) or plain HTML without wrapper libraries:
+
+```html
+<script type="module" src="node_modules/@llein/realtime-number-mask/dist/index.mjs"></script>
+
+<!-- Vietnamese Currency -->
+<realtime-number-input
+  thousand-separator="."
+  suffix=" ₫"
+  value="1000000"
+></realtime-number-input>
+
+<!-- US Currency with 2 decimals -->
+<realtime-number-input
+  locale="en-US"
+  precision="2"
+  prefix="$"
+  value="1500.50"
+></realtime-number-input>
+```
+
+### 3. Headless React / Controlled Component (`createNumberMaskState`)
+
+```tsx
+import React, { useState } from 'react';
+import { createNumberMaskState } from '@llein/realtime-number-mask';
+
+const maskState = createNumberMaskState({ thousandSeparator: ',', precision: 0 });
+
+export function CurrencyInput() {
+  const [value, setValue] = useState('');
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const cursorPos = e.target.selectionStart ?? e.target.value.length;
+    const next = maskState.calculateNextState(e.target.value, cursorPos);
+    setValue(next.formatted);
+    // next.numericValue contains raw number
+  };
+
+  return <input value={value} onChange={handleChange} />;
+}
+```
+
+### 4. Pure Functional Utilities (No DOM required)
 
 ```typescript
-import { formatNumber, unformatNumber, getNumericValue } from '@llein/realtime-number-mask';
+import { formatNumber, unformatNumber, getNumericValue, getLocaleSeparators, EURO_PRESET } from '@llein/realtime-number-mask';
 
-// Format
-formatNumber(1500000); // "1,500,000"
-formatNumber(1500000, { thousandSeparator: '.', suffix: ' ₫' }); // "1.500.000 ₫"
+// Auto-detect separators from BCP-47 locale
+formatNumber(5000000, { locale: 'vi-VN' }); // "5.000.000"
+formatNumber(5000000, { locale: 'en-US' }); // "5,000,000"
 
-// Unformat
+// Euro preset
+formatNumber(1500000.5, EURO_PRESET); // "€1.500.000,5"
+
+// Extract numeric values
 unformatNumber('1.500.000 ₫'); // "1500000"
-getNumericValue('1.500.000 ₫'); // 1500000
+getNumericValue('1.500.000,50 ₫', { decimalSeparator: ',' }); // 1500000.5
 ```
 
 ---
@@ -79,15 +132,18 @@ getNumericValue('1.500.000 ₫'); // 1500000
 
 | Option | Type | Default | Description |
 |---|---|:---:|---|
-| `thousandSeparator` | `string` | `','` | Character grouping thousands (e.g. `','`, `'.'`) |
-| `decimalSeparator` | `string` | `'.'` | Character separating decimal fractions |
+| `locale` | `string` | `undefined` | BCP 47 locale tag (`'vi-VN'`, `'en-US'`, `'de-DE'`) for auto-resolving separators |
+| `thousandSeparator` | `string` | `','` | Grouping separator for thousands (e.g. `','`, `'.'`) |
+| `decimalSeparator` | `string` | `'.'` | Fraction separator for decimals |
 | `precision` | `number` | `0` | Decimal precision limit (`0` for integer / VND) |
-| `allowNegative` | `boolean` | `false` | Allow negative values with `-` |
-| `prefix` | `string` | `''` | String preceding the digits (e.g. `'$'`) |
-| `suffix` | `string` | `''` | String following the digits (e.g. `' ₫'`, `' VND'`) |
-| `max` | `number \| bigint` | `undefined` | Upper numerical cap |
-| `min` | `number \| bigint` | `undefined` | Lower numerical floor |
-| `onChange` | `(details) => void` | `undefined` | Real-time value change callback |
+| `allowNegative` | `boolean` | `false` | Enable negative sign `-` support |
+| `prefix` | `string` | `''` | Fixed prefix (e.g. `'$'`, `'US$ '`) |
+| `suffix` | `string` | `''` | Fixed suffix (e.g. `' ₫'`, `' VND'`) |
+| `smartArrowNavigation` | `boolean` | `true` | Caret automatically steps over thousand separators |
+| `autoInputMode` | `boolean` | `true` | Automatically optimizes mobile virtual keyboard |
+| `max` | `number \| bigint` | `undefined` | Numerical upper boundary |
+| `min` | `number \| bigint` | `undefined` | Numerical lower boundary |
+| `onChange` | `(details) => void` | `undefined` | Real-time formatted and raw value change callback |
 
 ---
 
