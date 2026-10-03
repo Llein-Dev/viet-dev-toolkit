@@ -1,6 +1,22 @@
-# 🚀 50 Micro / Utility NPM Packages Factory
+# 🚀 Vietnam Dev-Toolkit Factory
 
 > Bộ sưu tập **50 gói NPM Micro / Utility (Zero & Low Dependency)** giải quyết đúng bài toán thực tế, tối ưu trải nghiệm lập trình viên (Developer Experience), sẵn sàng build và publish lên GitHub & NPM.
+
+[![CI / Build & Test](https://github.com/Llein-Dev/viet-dev-toolkit/actions/workflows/ci.yml/badge.svg)](https://github.com/Llein-Dev/viet-dev-toolkit/actions)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Playground-emerald?style=flat-square&logo=google-chrome)](https://llein-dev.github.io/viet-dev-toolkit/)
+[![GitHub license](https://img.shields.io/github/license/Llein-Dev/viet-dev-toolkit?style=flat-square)](./LICENSE)
+[![GitHub stars](https://img.shields.io/github/stars/Llein-Dev/viet-dev-toolkit?style=flat-square)](https://github.com/Llein-Dev/viet-dev-toolkit)
+
+---
+
+## 🌐 Live Interactive Playground
+
+Trải nghiệm trực quan ngay trên trình duyệt không cần cài đặt:  
+👉 **[https://llein-dev.github.io/viet-dev-toolkit/](https://llein-dev.github.io/viet-dev-toolkit/)**
+
+- **Tab 1:** CCCD / VNeID 12 số & Chip QR Code Parser
+- **Tab 2:** VietQR NAPAS247 Generator (54+ Ngân hàng Việt Nam)
+- **Tab 3:** Đọc số tiền thành chữ hóa đơn (Hỗ trợ giọng Bắc / Nam, BigInt, hàng nghìn tỷ)
 
 ---
 

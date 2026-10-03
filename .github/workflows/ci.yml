@@ -1,0 +1,44 @@
+name: CI / Build & Test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x, 22.x]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Test 01-vn-cccd-parser
+        run: |
+          cd 01-vn-cccd-parser
+          npm install
+          npm test
+          npm run build
+
+      - name: Test 04-vn-currency-words
+        run: |
+          cd 04-vn-currency-words
+          npm install
+          npm test
+          npm run build
+
+      - name: Test 06-vn-bank-qr-gen
+        run: |
+          cd 06-vn-bank-qr-gen
+          npm install
+          npm test
+          npm run build

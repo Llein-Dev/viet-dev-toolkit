@@ -1,20 +1,22 @@
-# vn-currency-words
+# @llein/vn-currency-words
 
-> Convert numerical amounts to standardized Vietnamese words for banking, invoices, and legal contracts.
+> Enterprise-grade, zero-dependency utility to convert numbers into standardized Vietnamese currency words for invoices, banking, and contracts.
 
-[![npm version](https://img.shields.io/npm/v/vn-currency-words.svg?style=flat-square)](https://www.npmjs.com/package/vn-currency-words)
-[![npm downloads](https://img.shields.io/npm/dm/vn-currency-words.svg?style=flat-square)](https://www.npmjs.com/package/vn-currency-words)
-[![bundle size](https://img.shields.io/bundlephobia/minzip/vn-currency-words?style=flat-square)](https://bundlephobia.com/package/vn-currency-words)
-[![license](https://img.shields.io/npm/l/vn-currency-words.svg?style=flat-square)](./LICENSE)
+[![npm version](https://img.shields.io/npm/v/@llein/vn-currency-words.svg?style=flat-square)](https://www.npmjs.com/package/@llein/vn-currency-words)
+[![npm downloads](https://img.shields.io/npm/dm/@llein/vn-currency-words.svg?style=flat-square)](https://www.npmjs.com/package/@llein/vn-currency-words)
+[![bundle size](https://img.shields.io/bundlephobia/minzip/@llein/vn-currency-words?style=flat-square)](https://bundlephobia.com/package/@llein/vn-currency-words)
+[![license](https://img.shields.io/npm/l/@llein/vn-currency-words.svg?style=flat-square)](./LICENSE)
 
 ---
 
 ## ⚡ Highlights
 
-- **Zero / Lightweight Dependencies**: Fast, minimal footprint.
-- **Dual Export**: Built with `tsup` supporting both **ESM** (`.mjs`) and **CommonJS** (`.cjs`).
-- **100% TypeScript**: Strongly typed with full auto-completion and declaration files.
-- **Production Ready**: Tested for edge cases and high throughput.
+- **Zero Dependencies**: Pure TypeScript, minimal footprint (< 2KB gzipped).
+- **Accounting & Legal Ready**: Handles edge cases like *mốt, lăm, linh/lẻ, tư/bốn, không trăm linh một*.
+- **Regional Dialects**: Easily switch between North (`nghìn` & `linh`) and South (`ngàn` & `lẻ`) dialect modes.
+- **Large Numbers & BigInt**: Supports values from 0 up to trillions, quadrillions, and beyond.
+- **Decimal Fractions**: Cleanly reads fractional currency (xu, cents) or decimal points.
+- **Currency Formatter**: Includes `formatVND(1500000)` -> `"1.500.000 ₫"`.
 
 ---
 
@@ -22,52 +24,79 @@
 
 ```bash
 # Using npm
-npm install vn-currency-words
+npm install @llein/vn-currency-words
 
 # Using pnpm
-pnpm add vn-currency-words
+pnpm add @llein/vn-currency-words
 
 # Using yarn
-yarn add vn-currency-words
+yarn add @llein/vn-currency-words
 ```
 
 ---
 
 ## 🚀 Quickstart
 
-```typescript
-import { numberToVietnameseWords } from 'vn-currency-words';
+### 1. Basic Conversion
 
-console.log(numberToVietnameseWords(1500000));
+```typescript
+import { numberToWords, docSoThanhChu } from '@llein/vn-currency-words';
+
+console.log(numberToWords(1500000));
 // "Một triệu năm trăm nghìn đồng"
 
-console.log(numberToVietnameseWords('20500120', { suffix: 'đồng chẵn' }));
-// "Hai mươi triệu năm trăm linh một nghìn một trăm hai mươi đồng chẵn"
+console.log(numberToWords(101000, { suffix: 'đồng chẵn' }));
+// "Một trăm linh một nghìn đồng chẵn"
+```
+
+### 2. North vs South Dialects
+
+```typescript
+// North dialect (default): nghìn, linh
+console.log(numberToWords(101000, { dialect: 'north' }));
+// "Một trăm linh một nghìn đồng"
+
+// South dialect: ngàn, lẻ
+console.log(numberToWords(101000, { dialect: 'south' }));
+// "Một trăm lẻ một ngàn đồng"
+```
+
+### 3. Extremely Large Numbers (BigInt / String)
+
+```typescript
+console.log(numberToWords('1000000000000'));
+// "Một nghìn tỷ đồng"
+
+console.log(numberToWords(1000000000000000n));
+// "Một triệu tỷ đồng"
+```
+
+### 4. Fast Currency Formatter
+
+```typescript
+import { formatVND } from '@llein/vn-currency-words';
+
+console.log(formatVND(1500000)); // "1.500.000 ₫"
+console.log(formatVND(-50000));  // "-50.000 ₫"
 ```
 
 ---
 
 ## 📖 API Reference
 
-- `numberToVietnameseWords(amount: number | string, options?): string`
+### `numberToWords(amount, options?)`
 
----
-
-## 🛠️ Development & Testing
-
-```bash
-# Install dependencies
-npm install
-
-# Build ESM, CJS, and types
-npm run build
-
-# Run unit tests
-npm test
-```
+| Option | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `suffix` | `string` | `'đồng'` | Currency unit to append at the end |
+| `dialect` | `'north' \| 'south'` | `'north'` | Regional reading preference |
+| `capitalizeFirst` | `boolean` | `true` | Capitalize the first letter |
+| `useTuInsteadOfBon` | `boolean` | `true` | Use "tư" instead of "bốn" (e.g. "hai mươi tư") |
+| `negativePrefix` | `string` | `'âm'` | Prefix for negative numbers |
+| `decimalMode` | `'point' \| 'subunit'` | `'point'` | How decimals are read |
 
 ---
 
 ## 📄 License
 
-MIT © [Your Name](https://github.com)
+MIT © [llein](https://github.com/Llein-Dev)

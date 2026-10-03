@@ -1,20 +1,29 @@
 {
-  "name": "vn-currency-words",
+  "name": "@llein/vn-currency-words",
   "version": "1.0.0",
   "description": "Convert numerical amounts to standardized Vietnamese words for banking, invoices, and legal contracts.",
-  "main": "./dist/index.cjs",
+  "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs"
+      "require": "./dist/index.js"
     }
   },
   "files": [
     "dist"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Llein-Dev/viet-dev-toolkit.git",
+    "directory": "04-vn-currency-words"
+  },
+  "homepage": "https://github.com/Llein-Dev/viet-dev-toolkit#readme",
+  "bugs": {
+    "url": "https://github.com/Llein-Dev/viet-dev-toolkit/issues"
+  },
   "scripts": {
     "build": "tsup src/index.ts --format cjs,esm --dts --clean",
     "dev": "tsup src/index.ts --format cjs,esm --watch --dts",
@@ -32,7 +41,7 @@
     "vnd",
     "finance"
   ],
-  "author": "",
+  "author": "llein",
   "license": "MIT",
   "devDependencies": {
     "tsup": "^8.3.5",
