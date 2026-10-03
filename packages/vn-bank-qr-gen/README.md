@@ -91,11 +91,51 @@ if (parsed.isValid && parsed.crcValid) {
 ### 4. Search Bank Information
 
 ```typescript
-import { findBank } from 'vn-bank-qr-gen';
+import { findBank } from '@llein/vn-bank-qr-gen';
 
 const bank = findBank('Techcombank');
 console.log(bank);
 // { bin: '970407', code: 'TCB', shortName: 'Techcombank', name: 'Ngân hàng TMCP Kỹ thương Việt Nam', supportNapas247: true }
+```
+
+### 5. React Custom Hook (`useVietQR`)
+
+Tự động reactive sinh lại mã QR và link ảnh thanh toán mỗi khi state số tiền hoặc thông tin đơn hàng thay đổi:
+
+```tsx
+import React, { useState } from 'react';
+import { useVietQR } from '@llein/vn-bank-qr-gen/react';
+
+export function CheckoutModal({ orderId }) {
+  const [amount, setAmount] = useState(150000);
+
+  const { qrImageUrl, qrContent, isReady, error } = useVietQR({
+    bank: 'MB',
+    accountNumber: '0981234567',
+    accountName: 'NGUYEN VAN A',
+    amount,
+    message: `THANH TOAN DH ${orderId}`
+  });
+
+  return (
+    <div className="text-center p-4">
+      <input
+        type="number"
+        value={amount}
+        onChange={(e) => setAmount(Number(e.target.value))}
+        placeholder="Nhập số tiền..."
+      />
+
+      {isReady && (
+        <div className="mt-4">
+          <img src={qrImageUrl} alt="Mã VietQR" className="mx-auto rounded-xl shadow-lg" />
+          <p className="text-xs text-gray-500 mt-2 font-mono break-all">{qrContent}</p>
+        </div>
+      )}
+      {error && <p className="text-red-500">{error}</p>}
+    </div>
+  );
+}
 ```
 
 ---

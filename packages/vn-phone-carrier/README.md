@@ -60,6 +60,51 @@ console.log(formatPhone('0987654321', 'dots'));   // "0987.654.321"
 
 ---
 
+## ⚛️ React Custom Hook (`useVNPhone`)
+
+Tự động nhận diện nhà mạng, kiểm tra tính hợp lệ và lấy màu thương hiệu (Brand Color) thời gian thực khi người dùng nhập số điện thoại trong form:
+
+```tsx
+import React, { useState } from 'react';
+import { useVNPhone } from '@llein/vn-phone-carrier/react';
+
+export function PhoneField() {
+  const [phone, setPhone] = useState('');
+  const { carrier, isValid, brandColor, formattedPretty, lineType, e164 } = useVNPhone(phone);
+
+  return (
+    <div className="space-y-2">
+      <label>Số điện thoại:</label>
+      <div className="relative">
+        <input
+          type="tel"
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+          placeholder="VD: 098 765 4321"
+          className="border rounded-xl px-4 py-2 w-full pr-28"
+        />
+        {carrier && carrier !== 'Unknown' && (
+          <span
+            style={{ backgroundColor: brandColor }}
+            className="absolute right-2 top-2 px-2.5 py-1 text-xs text-white rounded-lg font-bold"
+          >
+            {carrier}
+          </span>
+        )}
+      </div>
+
+      {isValid && (
+        <p className="text-xs text-emerald-600">
+          Hợp lệ: {formattedPretty} (Chuẩn quốc tế: {e164})
+        </p>
+      )}
+    </div>
+  );
+}
+```
+
+---
+
 ## 🧪 Testing
 
 ```bash

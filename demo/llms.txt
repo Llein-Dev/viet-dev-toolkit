@@ -25,6 +25,7 @@ All packages are strictly **zero-dependency**, lightweight (< 5KB), and export d
   - `generateVietQR(options: VietQROptions): VietQRResult`
   - `findBank(keyword: string): BankInfo | undefined`
   - `parseVietQR(qrString: string): ParsedVietQR`
+  - `useVietQR(options: Partial<VietQROptions>): UseVietQRResult` (React Custom Hook)
   - `crc16CCITT(data: string): string`
   - `VIETNAM_BANKS: BankInfo[]`
 - **Example**:
@@ -170,6 +171,7 @@ All packages are strictly **zero-dependency**, lightweight (< 5KB), and export d
   - `formatPhone(phone: string, style?: 'pretty' | 'dots' | 'dashes' | 'e164' | 'national'): string`
   - `maskPhone(phone: string): string`
   - `isVNPhoneValid(phone: string): boolean`
+  - `useVNPhone(phoneNumber: string): UseVNPhoneResult` (React Custom Hook)
 - **Example**:
   ```typescript
   import { parseVNPhone, maskPhone, formatPhone } from '@llein/vn-phone-carrier';
@@ -223,6 +225,25 @@ All packages are strictly **zero-dependency**, lightweight (< 5KB), and export d
 
   // Web Component Usage (Zero-dependency in React, Vue, Svelte, or HTML):
   // <realtime-number-input thousand-separator="." suffix=" ₫" value="1000000"></realtime-number-input>
+  ```
+
+---
+
+## 9. @llein/keyboard-shortcut-listener
+- **Install**: `npm install @llein/keyboard-shortcut-listener`
+- **Purpose**: Zero-dependency keyboard shortcut listener and React hook for Cmd+K, Ctrl+S, Escape with cross-platform `mod` key and automatic text input suppression.
+- **Key APIs**:
+  - `registerShortcut(combo: string | string[], handler: (e: KeyboardEvent) => void, options?: ShortcutOptions): () => void`
+  - `useKeyboardShortcut(combo: string | string[], handler: (e: KeyboardEvent) => void, options?: UseKeyboardShortcutOptions): void` (React Hook)
+  - `parseCombo(combo: string): ParsedCombo`
+  - `matchesCombo(e: KeyboardEvent, parsed: ParsedCombo, exactModifiers?: boolean): boolean`
+- **Example**:
+  ```typescript
+  import { useKeyboardShortcut } from '@llein/keyboard-shortcut-listener/react';
+
+  // React Hook
+  useKeyboardShortcut('mod+k', () => openSearch(), { preventDefault: true });
+  useKeyboardShortcut('escape', () => closeModal());
   ```
 
 ---

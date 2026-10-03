@@ -1,24 +1,48 @@
 {
-  "name": "keyboard-shortcut-listener",
+  "name": "@llein/keyboard-shortcut-listener",
   "version": "1.0.0",
-  "description": "Reliable keyboard shortcut listener and React hook for Cmd+K, Ctrl+S, Escape with automatic suppression inside text input fields.",
-  "main": "./dist/index.cjs",
+  "description": "Zero-dependency keyboard shortcut listener and React hook for Cmd+K, Ctrl+S, Escape with cross-platform Mod key and input field suppression.",
+  "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs"
+      "require": "./dist/index.js"
+    },
+    "./react": {
+      "types": "./dist/react.d.ts",
+      "import": "./dist/react.mjs",
+      "require": "./dist/react.js"
+    }
+  },
+  "peerDependencies": {
+    "react": ">=16.8.0"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
     }
   },
   "files": [
     "dist"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Llein-Dev/viet-dev-toolkit.git",
+    "directory": "packages/keyboard-shortcut-listener"
+  },
+  "homepage": "https://github.com/Llein-Dev/viet-dev-toolkit#readme",
+  "bugs": {
+    "url": "https://github.com/Llein-Dev/viet-dev-toolkit/issues"
+  },
   "scripts": {
-    "build": "tsup src/index.ts --format cjs,esm --dts --clean",
-    "dev": "tsup src/index.ts --format cjs,esm --watch --dts",
+    "build": "tsup src/index.ts src/react.ts --format cjs,esm --dts --clean --external react",
+    "dev": "tsup src/index.ts src/react.ts --format cjs,esm --watch --dts --external react",
     "test": "vitest run --passWithNoTests",
+    "publish": "npm publish --access public",
+    "pub": "npm publish --access public",
     "prepublishOnly": "npm run build"
   },
   "keywords": [
@@ -30,9 +54,10 @@
     "keyboard",
     "ctrl-k",
     "cmd-k",
+    "react-hook",
     "react-hotkey"
   ],
-  "author": "",
+  "author": "llein",
   "license": "MIT",
   "devDependencies": {
     "tsup": "^8.3.5",

@@ -1,7 +1,7 @@
 {
   "name": "@llein/vn-bank-qr-gen",
   "version": "1.1.0",
-  "description": "Ultra-lightweight generator for VietQR (NAPAS 247) EMVCo payment payloads and quick-link QR URLs.",
+  "description": "Ultra-lightweight generator for VietQR (NAPAS 247) EMVCo payment payloads and quick-link QR URLs with React Hook useVietQR.",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
@@ -10,14 +10,27 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs",
       "require": "./dist/index.js"
+    },
+    "./react": {
+      "types": "./dist/react.d.ts",
+      "import": "./dist/react.mjs",
+      "require": "./dist/react.js"
+    }
+  },
+  "peerDependencies": {
+    "react": ">=16.8.0"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
     }
   },
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "tsup src/index.ts --format cjs,esm --dts --clean",
-    "dev": "tsup src/index.ts --format cjs,esm --watch --dts",
+    "build": "tsup src/index.ts src/react.ts --format cjs,esm --dts --clean --external react",
+    "dev": "tsup src/index.ts src/react.ts --format cjs,esm --watch --dts --external react",
     "test": "vitest run --passWithNoTests",
     "publish": "npm publish --access public",
     "pub": "npm publish --access public",
@@ -31,6 +44,8 @@
     "napas",
     "banking",
     "payment",
+    "react-hook",
+    "use-vietqr",
     "emvco",
     "vietnam"
   ],
