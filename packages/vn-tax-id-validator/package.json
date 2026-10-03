@@ -1,24 +1,35 @@
 {
-  "name": "vn-tax-id-validator",
+  "name": "@llein/vn-tax-id-validator",
   "version": "1.0.0",
-  "description": "Validate and format Vietnam Tax Identification Numbers (Mã số thuế - MST 10 and 13 digits) using official Checksum Modulo-11 algorithm.",
-  "main": "./dist/index.cjs",
+  "description": "Validate and format Vietnam Tax Identification Numbers (Mã số thuế - MST 10 and 13 digits) using official Checksum Modulo-11 algorithm (Circular 105/2020/TT-BTC).",
+  "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs"
+      "require": "./dist/index.js"
     }
   },
   "files": [
     "dist"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Llein-Dev/viet-dev-toolkit.git",
+    "directory": "packages/vn-tax-id-validator"
+  },
+  "homepage": "https://github.com/Llein-Dev/viet-dev-toolkit#readme",
+  "bugs": {
+    "url": "https://github.com/Llein-Dev/viet-dev-toolkit/issues"
+  },
   "scripts": {
     "build": "tsup src/index.ts --format cjs,esm --dts --clean",
     "dev": "tsup src/index.ts --format cjs,esm --watch --dts",
     "test": "vitest run",
+    "publish": "npm publish --access public",
+    "pub": "npm publish --access public",
     "prepublishOnly": "npm run build"
   },
   "keywords": [
@@ -28,11 +39,15 @@
     "vietnam",
     "tax-id",
     "mst",
+    "ma-so-thue",
     "validator",
     "checksum",
-    "accounting"
+    "modulo-11",
+    "e-invoice",
+    "accounting",
+    "fintech"
   ],
-  "author": "",
+  "author": "llein",
   "license": "MIT",
   "devDependencies": {
     "tsup": "^8.3.5",

@@ -1,24 +1,35 @@
 {
-  "name": "vn-phone-carrier",
+  "name": "@llein/vn-phone-carrier",
   "version": "1.0.0",
-  "description": "Detect Vietnamese mobile network operators (Viettel, Vina, Mobi, Vietnamobile, Wintel, I-Telecom) and validate national phone numbers.",
-  "main": "./dist/index.cjs",
+  "description": "Detect Vietnamese mobile network operators (Viettel, Vina, Mobi, Vietnamobile, Wintel, I-Telecom), 11-to-10 digit migration, and E.164 phone formatting.",
+  "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs"
+      "require": "./dist/index.js"
     }
   },
   "files": [
     "dist"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Llein-Dev/viet-dev-toolkit.git",
+    "directory": "packages/vn-phone-carrier"
+  },
+  "homepage": "https://github.com/Llein-Dev/viet-dev-toolkit#readme",
+  "bugs": {
+    "url": "https://github.com/Llein-Dev/viet-dev-toolkit/issues"
+  },
   "scripts": {
     "build": "tsup src/index.ts --format cjs,esm --dts --clean",
     "dev": "tsup src/index.ts --format cjs,esm --watch --dts",
     "test": "vitest run",
+    "publish": "npm publish --access public",
+    "pub": "npm publish --access public",
     "prepublishOnly": "npm run build"
   },
   "keywords": [
@@ -29,10 +40,15 @@
     "phone",
     "carrier",
     "telecom",
+    "viettel",
+    "vinaphone",
+    "mobifone",
+    "vietnamobile",
     "sms",
-    "otp"
+    "otp",
+    "e164"
   ],
-  "author": "",
+  "author": "llein",
   "license": "MIT",
   "devDependencies": {
     "tsup": "^8.3.5",

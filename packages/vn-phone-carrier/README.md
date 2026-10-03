@@ -1,20 +1,21 @@
-# vn-phone-carrier
+# @llein/vn-phone-carrier
 
-> Detect Vietnamese mobile network operators (Viettel, Vina, Mobi, Vietnamobile, Wintel, I-Telecom) and validate national phone numbers.
+> Detect Vietnamese mobile network operators (Viettel, Vina, Mobi, Vietnamobile, Wintel, I-Telecom), 11-to-10 digit migration, and E.164 phone formatting.
 
-[![npm version](https://img.shields.io/npm/v/vn-phone-carrier.svg?style=flat-square)](https://www.npmjs.com/package/vn-phone-carrier)
-[![npm downloads](https://img.shields.io/npm/dm/vn-phone-carrier.svg?style=flat-square)](https://www.npmjs.com/package/vn-phone-carrier)
-[![bundle size](https://img.shields.io/bundlephobia/minzip/vn-phone-carrier?style=flat-square)](https://bundlephobia.com/package/vn-phone-carrier)
-[![license](https://img.shields.io/npm/l/vn-phone-carrier.svg?style=flat-square)](./LICENSE)
+[![npm version](https://img.shields.io/npm/v/@llein/vn-phone-carrier.svg?style=flat-square)](https://www.npmjs.com/package/@llein/vn-phone-carrier)
+[![npm downloads](https://img.shields.io/npm/dm/@llein/vn-phone-carrier.svg?style=flat-square)](https://www.npmjs.com/package/@llein/vn-phone-carrier)
+[![bundle size](https://img.shields.io/bundlephobia/minzip/@llein/vn-phone-carrier?style=flat-square)](https://bundlephobia.com/package/@llein/vn-phone-carrier)
+[![license](https://img.shields.io/npm/l/@llein/vn-phone-carrier.svg?style=flat-square)](./LICENSE)
 
 ---
 
 ## ⚡ Highlights
 
-- **Zero / Lightweight Dependencies**: Fast, minimal footprint.
-- **Dual Export**: Built with `tsup` supporting both **ESM** (`.mjs`) and **CommonJS** (`.cjs`).
-- **100% TypeScript**: Strongly typed with full auto-completion and declaration files.
-- **Production Ready**: Tested for edge cases and high throughput.
+- **Complete Operator Coverage**: Detects Viettel, VinaPhone, MobiFone, Vietnamobile, Wintel (055), I-Telecom (087), and Gmobile (099, 059).
+- **Auto 11-to-10 Migration**: Converts legacy 11-digit prefixes from the MIC 2018 migration (e.g. `0168xxxxxxx` -> `038xxxxxxx`, `0120xxxxxxx` -> `070xxxxxxx`).
+- **Standard Formatting**: Formats into `pretty` (`0987 654 321`), `dots` (`0987.654.321`), `dashes` (`0987-654-321`), or `e164` (`+84987654321`).
+- **Privacy Masking**: Built-in `maskPhone()` for OTP, checkout, and SMS verification UIs (e.g. `0987***321`).
+- **Zero Dependencies**: Pure TypeScript, minified < 2KB.
 
 ---
 
@@ -22,13 +23,13 @@
 
 ```bash
 # Using npm
-npm install vn-phone-carrier
+npm install @llein/vn-phone-carrier
 
 # Using pnpm
-pnpm add vn-phone-carrier
+pnpm add @llein/vn-phone-carrier
 
 # Using yarn
-yarn add vn-phone-carrier
+yarn add @llein/vn-phone-carrier
 ```
 
 ---
@@ -36,34 +37,32 @@ yarn add vn-phone-carrier
 ## 🚀 Quickstart
 
 ```typescript
-import { parseVNPhone, isVNPhoneValid } from 'vn-phone-carrier';
+import { parseVNPhone, getCarrier, formatPhone, maskPhone } from '@llein/vn-phone-carrier';
 
-const phone = parseVNPhone('+84 981 234 567');
-console.log(phone.carrier);      // "Viettel"
-console.log(phone.formatE164);   // "+84981234567"
-console.log(phone.formatNational);// "0981234567"
+// 1. Parse and detect operator
+const info = parseVNPhone('+84987654321');
+console.log(info.carrier); // "Viettel"
+console.log(info.national); // "0987654321"
+console.log(info.e164); // "+84987654321"
+
+// 2. Legacy 11-digit auto migration
+const legacy = parseVNPhone('0168 123 4567');
+console.log(legacy.national); // "0381234567"
+console.log(legacy.wasMigratedFrom11Digits); // true
+
+// 3. Mask phone for OTP verification screen
+console.log(maskPhone('0987654321')); // "0987***321"
+
+// 4. Formatting styles
+console.log(formatPhone('0987654321', 'pretty')); // "0987 654 321"
+console.log(formatPhone('0987654321', 'dots'));   // "0987.654.321"
 ```
 
 ---
 
-## 📖 API Reference
-
-- `parseVNPhone(phone: string): VNPhoneResult`
-- `isVNPhoneValid(phone: string): boolean`
-- `getCarrier(phone: string): string | undefined`
-
----
-
-## 🛠️ Development & Testing
+## 🧪 Testing
 
 ```bash
-# Install dependencies
-npm install
-
-# Build ESM, CJS, and types
-npm run build
-
-# Run unit tests
 npm test
 ```
 
@@ -71,4 +70,4 @@ npm test
 
 ## 📄 License
 
-MIT © [Your Name](https://github.com)
+MIT © [Llein-Dev](https://github.com/Llein-Dev)

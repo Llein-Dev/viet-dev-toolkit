@@ -1,20 +1,22 @@
-# vn-tax-id-validator
+# @llein/vn-tax-id-validator
 
-> Validate and format Vietnam Tax Identification Numbers (Mã số thuế - MST 10 and 13 digits) using official Checksum Modulo-11 algorithm.
+> Validate, format, and parse Vietnam Tax Identification Numbers (Mã số thuế - MST 10 and 13 digits) using official Checksum Modulo-11 algorithm (Circular 105/2020/TT-BTC).
 
-[![npm version](https://img.shields.io/npm/v/vn-tax-id-validator.svg?style=flat-square)](https://www.npmjs.com/package/vn-tax-id-validator)
-[![npm downloads](https://img.shields.io/npm/dm/vn-tax-id-validator.svg?style=flat-square)](https://www.npmjs.com/package/vn-tax-id-validator)
-[![bundle size](https://img.shields.io/bundlephobia/minzip/vn-tax-id-validator?style=flat-square)](https://bundlephobia.com/package/vn-tax-id-validator)
-[![license](https://img.shields.io/npm/l/vn-tax-id-validator.svg?style=flat-square)](./LICENSE)
+[![npm version](https://img.shields.io/npm/v/@llein/vn-tax-id-validator.svg?style=flat-square)](https://www.npmjs.com/package/@llein/vn-tax-id-validator)
+[![npm downloads](https://img.shields.io/npm/dm/@llein/vn-tax-id-validator.svg?style=flat-square)](https://www.npmjs.com/package/@llein/vn-tax-id-validator)
+[![bundle size](https://img.shields.io/bundlephobia/minzip/@llein/vn-tax-id-validator?style=flat-square)](https://bundlephobia.com/package/@llein/vn-tax-id-validator)
+[![license](https://img.shields.io/npm/l/@llein/vn-tax-id-validator.svg?style=flat-square)](./LICENSE)
 
 ---
 
 ## ⚡ Highlights
 
-- **Zero / Lightweight Dependencies**: Fast, minimal footprint.
-- **Dual Export**: Built with `tsup` supporting both **ESM** (`.mjs`) and **CommonJS** (`.cjs`).
-- **100% TypeScript**: Strongly typed with full auto-completion and declaration files.
-- **Production Ready**: Tested for edge cases and high throughput.
+- **Official Modulo-11 Checksum**: Accurately implements the mathematical weights `[31, 29, 23, 19, 17, 13, 7, 5, 3]` specified by the Vietnam General Department of Taxation.
+- **Enterprise & Branch Support**: Handles 10-digit primary enterprise tax codes and 13-digit dependent branch codes (`XXXXXXXXXX-YYY`).
+- **Province Detection**: Resolves the issuing province / city from the first 2 digits across all 63 Vietnam provinces.
+- **CCCD Personal Tax Code**: Compatible with 12-digit citizen ID format under the Law on Identification 2023.
+- **Testing & Fixture Helpers**: Includes `generateMockTaxId()` to generate valid mock MSTs for e-invoicing and accounting test suites.
+- **Zero Dependencies**: Pure TypeScript, tiny footprint (< 3KB).
 
 ---
 
@@ -22,13 +24,13 @@
 
 ```bash
 # Using npm
-npm install vn-tax-id-validator
+npm install @llein/vn-tax-id-validator
 
 # Using pnpm
-pnpm add vn-tax-id-validator
+pnpm add @llein/vn-tax-id-validator
 
 # Using yarn
-yarn add vn-tax-id-validator
+yarn add @llein/vn-tax-id-validator
 ```
 
 ---
@@ -36,37 +38,61 @@ yarn add vn-tax-id-validator
 ## 🚀 Quickstart
 
 ```typescript
-import { validateTaxId, formatTaxId } from 'vn-tax-id-validator';
+import { validateTaxId, isValidTaxId, formatTaxId } from '@llein/vn-tax-id-validator';
 
-const result = validateTaxId('0100109106');
-console.log(result.isValid); // true
-console.log(result.type);    // "enterprise"
+// 1. Validate enterprise tax code
+const res = validateTaxId('0300588569'); // Vinamilk
+console.log(res.isValid);      // true
+console.log(res.type);         // "enterprise"
+console.log(res.provinceName); // "Thành phố Hồ Chí Minh"
+console.log(res.checkDigit);   // 9
 
-const branchResult = validateTaxId('0100109106-001');
-console.log(branchResult.isValid); // true
-console.log(branchResult.type);    // "branch"
+// 2. Validate branch tax code (13 digits)
+const branch = validateTaxId('0100109106001'); // Viettel branch
+console.log(branch.isValid);   // true
+console.log(branch.type);      // "branch"
+console.log(branch.formatted); // "0100109106-001"
+
+// 3. Fast boolean check
+console.log(isValidTaxId('0100109107')); // false (checksum error)
 ```
 
 ---
 
 ## 📖 API Reference
 
-- `validateTaxId(taxId: string): TaxValidationResult`
-- `formatTaxId(taxId: string): string`
-- `isEnterpriseTaxId(taxId: string): boolean`
+### `validateTaxId(taxId: string): TaxValidationResult`
+Full validation returning detailed metadata:
+```typescript
+interface TaxValidationResult {
+  isValid: boolean;
+  raw: string;
+  formatted: string;
+  type?: 'enterprise' | 'branch' | 'personal_10' | 'personal_cccd';
+  baseTaxId?: string;
+  branchCode?: string;
+  provinceCode?: string;
+  provinceName?: string;
+  checkDigit?: number;
+  expectedCheckDigit?: number;
+  error?: string;
+}
+```
+
+### `isValidTaxId(taxId: string): boolean`
+Quick boolean check for valid tax identification numbers.
+
+### `formatTaxId(taxId: string): string`
+Standardizes into `XXXXXXXXXX` or `XXXXXXXXXX-YYY`.
+
+### `generateMockTaxId(options?: { province?: string; branch?: boolean | string }): string`
+Generates syntactically and mathematically valid tax IDs for test suites.
 
 ---
 
-## 🛠️ Development & Testing
+## 🧪 Testing
 
 ```bash
-# Install dependencies
-npm install
-
-# Build ESM, CJS, and types
-npm run build
-
-# Run unit tests
 npm test
 ```
 
@@ -74,4 +100,4 @@ npm test
 
 ## 📄 License
 
-MIT © [Your Name](https://github.com)
+MIT © [Llein-Dev](https://github.com/Llein-Dev)
