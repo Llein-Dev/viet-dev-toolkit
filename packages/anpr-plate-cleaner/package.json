@@ -1,7 +1,7 @@
 {
-  "name": "@llein/vn-cccd-parser",
-  "version": "1.0.1",
-  "description": "Parse 12-digit Vietnam National Citizen Identity (CCCD/VNeID) number into birth year, century, gender, and birth province.",
+  "name": "@llein/anpr-plate-cleaner",
+  "version": "1.0.0",
+  "description": "Production-grade OCR/ANPR license plate text cleaner, character confusion disambiguation (0/O, 1/I, 8/B), 2-line combiner, and fuzzy matcher.",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
@@ -18,7 +18,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Llein-Dev/viet-dev-toolkit.git",
-    "directory": "01-vn-cccd-parser"
+    "directory": "packages/anpr-plate-cleaner"
   },
   "homepage": "https://github.com/Llein-Dev/viet-dev-toolkit#readme",
   "bugs": {
@@ -34,12 +34,15 @@
     "utility",
     "zero-dependency",
     "typescript",
+    "anpr",
+    "alpr",
+    "ocr",
+    "license-plate",
     "vietnam",
-    "cccd",
-    "vneid",
-    "identity",
-    "parser",
-    "validation"
+    "post-processing",
+    "cleaner",
+    "fuzzy-matching",
+    "computer-vision"
   ],
   "author": "llein",
   "license": "MIT",

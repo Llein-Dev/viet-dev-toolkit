@@ -1,7 +1,7 @@
 {
-  "name": "@llein/anpr-plate-cleaner",
+  "name": "@llein/vn-plate-format",
   "version": "1.0.0",
-  "description": "Production-grade OCR/ANPR license plate text cleaner, character confusion disambiguation (0/O, 1/I, 8/B), 2-line combiner, and fuzzy matcher.",
+  "description": "Format, standardize and parse Vietnam vehicle license plates according to Circular 24/2023/TT-BCA.",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
@@ -18,7 +18,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Llein-Dev/viet-dev-toolkit.git",
-    "directory": "anpr-plate-cleaner"
+    "directory": "packages/vn-plate-format"
   },
   "homepage": "https://github.com/Llein-Dev/viet-dev-toolkit#readme",
   "bugs": {
@@ -34,15 +34,11 @@
     "utility",
     "zero-dependency",
     "typescript",
-    "anpr",
-    "alpr",
-    "ocr",
-    "license-plate",
     "vietnam",
-    "post-processing",
-    "cleaner",
-    "fuzzy-matching",
-    "computer-vision"
+    "license-plate",
+    "anpr",
+    "bien-so-xe",
+    "circular-24-2023"
   ],
   "author": "llein",
   "license": "MIT",

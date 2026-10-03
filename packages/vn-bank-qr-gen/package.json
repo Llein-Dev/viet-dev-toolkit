@@ -1,7 +1,7 @@
 {
-  "name": "@llein/vn-currency-words",
-  "version": "1.0.0",
-  "description": "Convert numerical amounts to standardized Vietnamese words for banking, invoices, and legal contracts.",
+  "name": "@llein/vn-bank-qr-gen",
+  "version": "1.0.1",
+  "description": "Ultra-lightweight generator for VietQR (NAPAS 247) EMVCo payment payloads and quick-link QR URLs.",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
@@ -15,15 +15,6 @@
   "files": [
     "dist"
   ],
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Llein-Dev/viet-dev-toolkit.git",
-    "directory": "04-vn-currency-words"
-  },
-  "homepage": "https://github.com/Llein-Dev/viet-dev-toolkit#readme",
-  "bugs": {
-    "url": "https://github.com/Llein-Dev/viet-dev-toolkit/issues"
-  },
   "scripts": {
     "build": "tsup src/index.ts --format cjs,esm --dts --clean",
     "dev": "tsup src/index.ts --format cjs,esm --watch --dts",
@@ -34,15 +25,24 @@
     "utility",
     "zero-dependency",
     "typescript",
-    "vietnam",
-    "currency",
-    "doc-so-thanh-chu",
-    "invoice",
-    "vnd",
-    "finance"
+    "vietqr",
+    "napas",
+    "banking",
+    "payment",
+    "emvco",
+    "vietnam"
   ],
   "author": "llein",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Llein-Dev/viet-dev-toolkit.git",
+    "directory": "packages/vn-bank-qr-gen"
+  },
+  "homepage": "https://github.com/Llein-Dev/viet-dev-toolkit#readme",
+  "bugs": {
+    "url": "https://github.com/Llein-Dev/viet-dev-toolkit/issues"
+  },
   "devDependencies": {
     "tsup": "^8.3.5",
     "typescript": "^5.7.2",

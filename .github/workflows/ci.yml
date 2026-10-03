@@ -22,23 +22,37 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
-      - name: Test 01-vn-cccd-parser
+      - name: Test vn-cccd-parser
         run: |
-          cd 01-vn-cccd-parser
+          cd packages/vn-cccd-parser
           npm install
           npm test
           npm run build
 
-      - name: Test 04-vn-currency-words
+      - name: Test vn-bank-qr-gen
         run: |
-          cd 04-vn-currency-words
+          cd packages/vn-bank-qr-gen
           npm install
           npm test
           npm run build
 
-      - name: Test 06-vn-bank-qr-gen
+      - name: Test vn-currency-words
         run: |
-          cd 06-vn-bank-qr-gen
+          cd packages/vn-currency-words
+          npm install
+          npm test
+          npm run build
+
+      - name: Test vn-plate-format
+        run: |
+          cd packages/vn-plate-format
+          npm install
+          npm test
+          npm run build
+
+      - name: Test anpr-plate-cleaner
+        run: |
+          cd packages/anpr-plate-cleaner
           npm install
           npm test
           npm run build

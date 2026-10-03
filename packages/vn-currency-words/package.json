@@ -1,7 +1,7 @@
 {
-  "name": "@llein/vn-plate-format",
+  "name": "@llein/vn-currency-words",
   "version": "1.0.0",
-  "description": "Format, standardize and parse Vietnam vehicle license plates according to Circular 24/2023/TT-BCA.",
+  "description": "Convert numerical amounts to standardized Vietnamese words for banking, invoices, and legal contracts.",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
@@ -18,7 +18,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Llein-Dev/viet-dev-toolkit.git",
-    "directory": "03-vn-plate-format"
+    "directory": "packages/vn-currency-words"
   },
   "homepage": "https://github.com/Llein-Dev/viet-dev-toolkit#readme",
   "bugs": {
@@ -35,10 +35,11 @@
     "zero-dependency",
     "typescript",
     "vietnam",
-    "license-plate",
-    "anpr",
-    "bien-so-xe",
-    "circular-24-2023"
+    "currency",
+    "doc-so-thanh-chu",
+    "invoice",
+    "vnd",
+    "finance"
   ],
   "author": "llein",
   "license": "MIT",
