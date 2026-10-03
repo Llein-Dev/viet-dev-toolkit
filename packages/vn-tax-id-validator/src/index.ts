@@ -74,6 +74,16 @@ export const TAX_PROVINCE_MAP: Record<string, string> = {
   '64': 'Tỉnh Bình Phước'
 };
 
+const VALID_CCCD_PROVINCES = new Set([
+  '001', '002', '004', '006', '008', '010', '011', '012', '014', '015',
+  '017', '019', '020', '022', '024', '025', '026', '027', '030', '031',
+  '033', '034', '035', '036', '037', '038', '040', '042', '044', '045',
+  '046', '048', '049', '051', '052', '054', '056', '058', '060', '062',
+  '064', '066', '067', '068', '070', '072', '074', '075', '077', '079',
+  '080', '082', '083', '084', '086', '087', '089', '091', '092', '093',
+  '094', '095', '096'
+]);
+
 export interface TaxValidationResult {
   isValid: boolean;
   raw: string;
@@ -104,9 +114,7 @@ export function calculateTaxChecksum(first9Digits: string): number {
   const remainder = sum % 11;
   const check = 10 - remainder;
 
-  if (check === 10) return 0;
-  if (check === 11) return 0;
-  return check;
+  return check === 10 ? 0 : check;
 }
 
 /**
@@ -132,6 +140,12 @@ export function validateTaxId(taxId: string): TaxValidationResult {
 
   // Case 1: 12-digit CCCD used as personal tax ID under Law on Identification 2023
   if (/^\d{12}$/.test(clean)) {
+    const prov = clean.slice(0, 3);
+    if (!VALID_CCCD_PROVINCES.has(prov)) {
+      result.error = `Invalid CCCD personal tax ID province code "${prov}"`;
+      return result;
+    }
+
     result.isValid = true;
     result.raw = clean;
     result.formatted = clean;
@@ -169,6 +183,11 @@ export function validateTaxId(taxId: string): TaxValidationResult {
   }
 
   const provCode = base.slice(0, 2);
+  if (!TAX_PROVINCE_MAP[provCode]) {
+    result.error = `Invalid tax province code "${provCode}"`;
+    return result;
+  }
+
   const actualCheckDigit = parseInt(base[9], 10);
   const expectedCheckDigit = calculateTaxChecksum(base.slice(0, 9));
 

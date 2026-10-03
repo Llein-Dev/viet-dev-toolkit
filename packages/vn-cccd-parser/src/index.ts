@@ -1,6 +1,6 @@
 /**
  * vn-cccd-parser
- * Comprehensive Vietnam Citizen Identity (CCCD / VNeID) Parser & Validator
+ * Comprehensive Vietnam Citizen Identity (CCCD / VNeID & CMND) Parser & Validator
  * Zero-dependency, 100% TypeScript, Dual ESM/CJS
  */
 
@@ -19,6 +19,7 @@ export interface RenewalMilestones {
   age40Year: number;
   age60Year: number;
   nextRenewalYear: number | null;
+  cardExpiryYear: number | null;
   isExpired: boolean;
 }
 
@@ -62,7 +63,7 @@ export interface CMNDParseResult {
   error?: string;
 }
 
-// 63 Provinces & Municipalities of Vietnam
+// 63 Provinces & Municipalities of Vietnam (CCCD 3-digit prefix)
 export const PROVINCE_MAP: Record<string, { name: string; region: Region; isMunicipality: boolean }> = {
   '001': { name: 'Thành phố Hà Nội', region: 'Miền Bắc', isMunicipality: true },
   '002': { name: 'Tỉnh Hà Giang', region: 'Miền Bắc', isMunicipality: false },
@@ -133,6 +134,71 @@ export const PROVINCE_CODES: Record<string, string> = Object.fromEntries(
   Object.entries(PROVINCE_MAP).map(([code, info]) => [code, info.name])
 );
 
+// 9-digit CMND Province code table
+export const CMND_PROVINCE_MAP: Record<string, string> = {
+  '01': 'Thành phố Hà Nội',
+  '02': 'Thành phố Hồ Chí Minh',
+  '03': 'Thành phố Hải Phòng',
+  '04': 'Tỉnh Hà Tây (cũ)',
+  '05': 'Tỉnh Nam Định',
+  '06': 'Tỉnh Hà Nam',
+  '07': 'Tỉnh Ninh Bình',
+  '08': 'Tỉnh Thái Bình',
+  '09': 'Tỉnh Hưng Yên',
+  '10': 'Tỉnh Hải Dương',
+  '11': 'Tỉnh Quảng Ninh',
+  '12': 'Tỉnh Bắc Giang',
+  '13': 'Tỉnh Bắc Ninh',
+  '14': 'Tỉnh Cao Bằng',
+  '15': 'Tỉnh Lạng Sơn',
+  '16': 'Tỉnh Bắc Kạn',
+  '17': 'Tỉnh Thái Nguyên',
+  '18': 'Tỉnh Tuyên Quang',
+  '19': 'Tỉnh Lào Cai',
+  '20': 'Tỉnh Yên Bái',
+  '21': 'Tỉnh Lai Châu / Điện Biên',
+  '22': 'Tỉnh Sơn La',
+  '23': 'Tỉnh Hoà Bình',
+  '24': 'Tỉnh Hà Giang',
+  '25': 'Tỉnh Phú Thọ',
+  '26': 'Tỉnh Vĩnh Phúc',
+  '27': 'Tỉnh Thanh Hoá',
+  '28': 'Tỉnh Nghệ An',
+  '29': 'Tỉnh Hà Tĩnh',
+  '30': 'Tỉnh Quảng Bình',
+  '31': 'Tỉnh Quảng Trị',
+  '32': 'Tỉnh Thừa Thiên Huế',
+  '33': 'Tỉnh Quảng Nam',
+  '34': 'Thành phố Đà Nẵng',
+  '35': 'Tỉnh Quảng Ngãi',
+  '36': 'Tỉnh Bình Định',
+  '37': 'Tỉnh Phú Yên',
+  '38': 'Tỉnh Khánh Hoà',
+  '39': 'Tỉnh Ninh Thuận',
+  '40': 'Tỉnh Bình Thuận',
+  '41': 'Tỉnh Kon Tum',
+  '42': 'Tỉnh Gia Lai',
+  '43': 'Tỉnh Đắk Lắk / Đắk Nông',
+  '44': 'Tỉnh Lâm Đồng',
+  '45': 'Tỉnh Bình Phước',
+  '46': 'Tỉnh Tây Ninh',
+  '47': 'Tỉnh Bình Dương',
+  '48': 'Tỉnh Đồng Nai',
+  '49': 'Tỉnh Bà Rịa - Vũng Tàu',
+  '50': 'Tỉnh Long An',
+  '51': 'Tỉnh Đồng Tháp',
+  '52': 'Tỉnh An Giang',
+  '53': 'Tỉnh Tiền Giang',
+  '54': 'Tỉnh Vĩnh Long',
+  '55': 'Tỉnh Bến Tre',
+  '56': 'Tỉnh Kiên Giang',
+  '57': 'Thành phố Cần Thơ / Hậu Giang',
+  '58': 'Tỉnh Trà Vinh',
+  '59': 'Tỉnh Sóc Trăng',
+  '60': 'Tỉnh Bạc Liêu',
+  '61': 'Tỉnh Cà Mau'
+};
+
 /**
  * Calculates identity card renewal milestones based on Article 21, Vietnam Citizen Identity Law
  * (Required renewals at ages 25, 40, and 60).
@@ -143,24 +209,30 @@ export function getRenewalMilestones(birthYear: number, currentYear = new Date()
   const age60Year = birthYear + 60;
 
   let nextRenewalYear: number | null = null;
+  let cardExpiryYear: number | null = null;
   let isExpired = false;
 
   if (currentYear < age25Year) {
     nextRenewalYear = age25Year;
+    cardExpiryYear = age25Year;
   } else if (currentYear < age40Year) {
     nextRenewalYear = age40Year;
+    cardExpiryYear = age40Year;
   } else if (currentYear < age60Year) {
     nextRenewalYear = age60Year;
+    cardExpiryYear = age60Year;
   } else {
     // Over 60: permanent validity, no more renewals required
     nextRenewalYear = null;
+    cardExpiryYear = null;
   }
 
-  // Check if citizen missed a required renewal milestone
+  // Check if citizen passed a required renewal milestone beyond the 2-year grace period
   const currentAge = currentYear - birthYear;
   if (
     (currentAge > 25 && currentAge < 40 && currentYear > age25Year + 2) ||
-    (currentAge > 40 && currentAge < 60 && currentYear > age40Year + 2)
+    (currentAge > 40 && currentAge < 60 && currentYear > age40Year + 2) ||
+    (currentAge > 60 && currentYear > age60Year + 2)
   ) {
     isExpired = true;
   }
@@ -170,6 +242,7 @@ export function getRenewalMilestones(birthYear: number, currentYear = new Date()
     age40Year,
     age60Year,
     nextRenewalYear,
+    cardExpiryYear,
     isExpired
   };
 }
@@ -291,6 +364,63 @@ export function isValidCCCD(id: string): boolean {
 }
 
 /**
+ * Format CCCD for clean display
+ * @param id 12-digit CCCD string
+ * @param style 'spaced' (e.g. "001 095 012345") or 'segmented' (e.g. "001 0 95 012345")
+ */
+export function formatCCCD(id: string, style: 'spaced' | 'segmented' = 'spaced'): string {
+  const clean = String(id || '').replace(/\D/g, '');
+  if (clean.length !== 12) return id;
+
+  if (style === 'segmented') {
+    // 3 digits province, 1 digit gender, 2 digits birth year, 6 digits random
+    return `${clean.slice(0, 3)} ${clean.slice(3, 4)} ${clean.slice(4, 6)} ${clean.slice(6)}`;
+  }
+  // Standard 3 groups of 4 digits: "0010 9501 2345" or 3-3-6: "001 095 012345"
+  return `${clean.slice(0, 3)} ${clean.slice(3, 6)} ${clean.slice(6)}`;
+}
+
+/**
+ * Parse legacy 9-digit Vietnam National Identity Card (CMND)
+ */
+export function parseCMND(id: string): CMNDParseResult {
+  const clean = String(id || '').trim();
+
+  if (!/^\d{9}$/.test(clean)) {
+    return {
+      isValid: false,
+      raw: clean,
+      error: 'Số CMND phải bao gồm đúng 9 chữ số'
+    };
+  }
+
+  const provCode = clean.slice(0, 2);
+  const province = CMND_PROVINCE_MAP[provCode];
+
+  if (!province) {
+    return {
+      isValid: false,
+      raw: clean,
+      error: `Mã tỉnh/thành phố trên CMND không hợp lệ: "${provCode}"`
+    };
+  }
+
+  return {
+    isValid: true,
+    raw: clean,
+    provinceCode: provCode,
+    province
+  };
+}
+
+/**
+ * Check if a string is a valid legacy 9-digit CMND
+ */
+export function isValidCMND(id: string): boolean {
+  return parseCMND(id).isValid;
+}
+
+/**
  * Parse QR Code data string printed on chip-based CCCD
  * Format: CCCD|OldCMND|FullName|DOB(DDMMYYYY)|Gender|Address|IssueDate(DDMMYYYY)
  */
@@ -306,29 +436,34 @@ export function parseCCCDQr(qrString: string): CCCDQrResult {
     };
   }
 
-  const [cccd, oldCmnd, fullName, dobRaw, genderRaw, address, issueDateRaw] = parts;
+  const [cccdRaw, oldCmndRaw, fullNameRaw, dobRaw, genderRaw, addressRaw, issueDateRaw] = parts;
+  const cccd = (cccdRaw || '').trim();
+  const oldCmnd = oldCmndRaw ? oldCmndRaw.trim() : undefined;
+  const fullName = fullNameRaw ? fullNameRaw.trim() : undefined;
+  const address = addressRaw ? addressRaw.trim() : undefined;
 
   // Format DOB from DDMMYYYY to ISO YYYY-MM-DD
-  let dateOfBirth = dobRaw;
+  let dateOfBirth = dobRaw ? dobRaw.trim() : '';
   let birthYearFromDob: number | undefined;
-  if (/^\d{8}$/.test(dobRaw)) {
-    const d = dobRaw.slice(0, 2);
-    const m = dobRaw.slice(2, 4);
-    const y = dobRaw.slice(4, 8);
+  if (/^\d{8}$/.test(dateOfBirth)) {
+    const d = dateOfBirth.slice(0, 2);
+    const m = dateOfBirth.slice(2, 4);
+    const y = dateOfBirth.slice(4, 8);
     dateOfBirth = `${y}-${m}-${d}`;
     birthYearFromDob = parseInt(y, 10);
   }
 
   // Format IssueDate from DDMMYYYY to ISO YYYY-MM-DD
-  let issueDate = issueDateRaw;
-  if (issueDateRaw && /^\d{8}$/.test(issueDateRaw)) {
-    const d = issueDateRaw.slice(0, 2);
-    const m = issueDateRaw.slice(2, 4);
-    const y = issueDateRaw.slice(4, 8);
+  let issueDate = issueDateRaw ? issueDateRaw.trim() : undefined;
+  if (issueDate && /^\d{8}$/.test(issueDate)) {
+    const d = issueDate.slice(0, 2);
+    const m = issueDate.slice(2, 4);
+    const y = issueDate.slice(4, 8);
     issueDate = `${y}-${m}-${d}`;
   }
 
-  const gender = genderRaw === 'Nam' ? 'Nam' : genderRaw === 'Nữ' ? 'Nữ' : undefined;
+  const cleanGender = genderRaw ? genderRaw.trim() : '';
+  const gender: Gender | undefined = cleanGender === 'Nam' ? 'Nam' : cleanGender === 'Nữ' ? 'Nữ' : undefined;
   const parsedCCCD = parseCCCD(cccd);
 
   // Consistency cross-check between QR fields and CCCD numbers
@@ -344,11 +479,11 @@ export function parseCCCDQr(qrString: string): CCCDQrResult {
     isValid: true,
     raw: clean,
     cccd,
-    oldCmnd: oldCmnd ? oldCmnd.trim() : undefined,
-    fullName: fullName ? fullName.trim() : undefined,
+    oldCmnd,
+    fullName,
     dateOfBirth,
     gender,
-    address: address ? address.trim() : undefined,
+    address,
     issueDate,
     parsedCCCD,
     isConsistent

@@ -8,7 +8,7 @@ import {
 } from './index';
 
 describe('vn-bank-qr-gen', () => {
-  it('should find bank by BIN or Code', () => {
+  it('should find bank by BIN, Code, or partial keyword', () => {
     const mb = findBank('970422');
     expect(mb?.shortName).toBe('MBBank');
 
@@ -17,12 +17,23 @@ describe('vn-bank-qr-gen', () => {
 
     const tcb = findBank('Techcombank');
     expect(tcb?.code).toBe('TCB');
+
+    // Partial lowercase keywords
+    const ctg = findBank('vietin');
+    expect(ctg?.code).toBe('CTG');
+
+    const agri = findBank('agri');
+    expect(agri?.code).toBe('VBA');
+
+    const sacom = findBank('sacom');
+    expect(sacom?.code).toBe('STB');
   });
 
-  it('should generate valid dynamic VietQR payload and parse it back accurately', () => {
+  it('should generate valid dynamic VietQR payload with accountName and parse it back accurately', () => {
     const qrResult = generateVietQR({
       bank: 'MB',
       accountNumber: '0981234567',
+      accountName: 'NGUYEN VAN A',
       amount: 150000,
       message: 'DH999'
     });
@@ -30,6 +41,7 @@ describe('vn-bank-qr-gen', () => {
     expect(qrResult.qrContent).toBeDefined();
     expect(qrResult.qrContent.startsWith('000201010212')).toBe(true); // Tag 01 = 12 (Dynamic)
     expect(qrResult.qrImageUrl).toContain('img.vietqr.io');
+    expect(qrResult.qrImageUrl).toContain('accountName=NGUYEN+VAN+A');
 
     // Parse the generated QR content back
     const parsed = parseVietQR(qrResult.qrContent);
@@ -38,6 +50,7 @@ describe('vn-bank-qr-gen', () => {
     expect(parsed.bankBin).toBe('970422');
     expect(parsed.bank?.shortName).toBe('MBBank');
     expect(parsed.accountNumber).toBe('0981234567');
+    expect(parsed.accountName).toBe('NGUYEN VAN A');
     expect(parsed.amount).toBe(150000);
     expect(parsed.message).toBe('DH999');
   });

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Vietnam Micro-Utilities Playground | CCCD, VietQR, Currency Words & ANPR</title>
+  <title>Vietnam Micro-Utilities Playground | CCCD, VietQR, Currency, Plates & Tax/Telco</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 </head>
@@ -19,7 +19,7 @@
         Vietnam Dev-Toolkit Playground
       </h1>
       <p class="text-slate-400 text-sm mt-2">
-        Trải nghiệm trực quan bộ thư viện: <span class="text-indigo-400 font-mono">vn-cccd-parser</span>, <span class="text-emerald-400 font-mono">vn-bank-qr-gen</span>, <span class="text-amber-400 font-mono">vn-currency-words</span>, <span class="text-cyan-400 font-mono">vn-plate-format</span> & <span class="text-purple-400 font-mono">anpr-plate-cleaner</span>
+        Trải nghiệm trực quan bộ thư viện: <span class="text-indigo-400 font-mono">vn-cccd-parser</span>, <span class="text-emerald-400 font-mono">vn-bank-qr-gen</span>, <span class="text-amber-400 font-mono">vn-currency-words</span>, <span class="text-cyan-400 font-mono">vn-plate-format</span>, <span class="text-purple-400 font-mono">anpr-plate-cleaner</span>, <span class="text-rose-400 font-mono">vn-tax-id-validator</span> & <span class="text-sky-400 font-mono">vn-phone-carrier</span>
       </p>
       <div class="mt-4 flex justify-center gap-3 text-xs">
         <a href="https://github.com/Llein-Dev/viet-dev-toolkit" target="_blank" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg text-slate-300 font-medium inline-flex items-center gap-1.5 transition">
@@ -34,17 +34,20 @@
     <!-- Tab navigation -->
     <div class="flex justify-center mb-8">
       <div class="bg-slate-800 p-1.5 rounded-xl border border-slate-700 flex flex-wrap gap-2 justify-center">
-        <button id="tab-cccd-btn" onclick="switchTab('cccd')" class="px-4 py-2 rounded-lg text-xs md:text-sm font-semibold transition-all bg-indigo-600 text-white shadow-lg shadow-indigo-600/30">
+        <button id="tab-cccd-btn" onclick="switchTab('cccd')" class="px-3.5 py-2 rounded-lg text-xs md:text-sm font-semibold transition-all bg-indigo-600 text-white shadow-lg shadow-indigo-600/30">
           <i class="fa-solid fa-id-card mr-1.5"></i> 1. CCCD / VNeID
         </button>
-        <button id="tab-vietqr-btn" onclick="switchTab('vietqr')" class="px-4 py-2 rounded-lg text-xs md:text-sm font-semibold transition-all text-slate-400 hover:text-white">
+        <button id="tab-vietqr-btn" onclick="switchTab('vietqr')" class="px-3.5 py-2 rounded-lg text-xs md:text-sm font-semibold transition-all text-slate-400 hover:text-white">
           <i class="fa-solid fa-qrcode mr-1.5"></i> 2. VietQR NAPAS247
         </button>
-        <button id="tab-currency-btn" onclick="switchTab('currency')" class="px-4 py-2 rounded-lg text-xs md:text-sm font-semibold transition-all text-slate-400 hover:text-white">
-          <i class="fa-solid fa-money-bill-wave mr-1.5"></i> 3. Đọc số tiền thành chữ
+        <button id="tab-currency-btn" onclick="switchTab('currency')" class="px-3.5 py-2 rounded-lg text-xs md:text-sm font-semibold transition-all text-slate-400 hover:text-white">
+          <i class="fa-solid fa-money-bill-wave mr-1.5"></i> 3. Đọc số tiền
         </button>
-        <button id="tab-plate-btn" onclick="switchTab('plate')" class="px-4 py-2 rounded-lg text-xs md:text-sm font-semibold transition-all text-slate-400 hover:text-white">
-          <i class="fa-solid fa-car-side mr-1.5"></i> 4. Biển số xe & ANPR OCR
+        <button id="tab-plate-btn" onclick="switchTab('plate')" class="px-3.5 py-2 rounded-lg text-xs md:text-sm font-semibold transition-all text-slate-400 hover:text-white">
+          <i class="fa-solid fa-car-side mr-1.5"></i> 4. Biển số & ANPR
+        </button>
+        <button id="tab-tax-btn" onclick="switchTab('tax')" class="px-3.5 py-2 rounded-lg text-xs md:text-sm font-semibold transition-all text-slate-400 hover:text-white">
+          <i class="fa-solid fa-file-invoice mr-1.5"></i> 5. Mã số thuế & Nhà mạng
         </button>
       </div>
     </div>
@@ -317,6 +320,66 @@
         </div>
       </div>
     </div>
+
+    <!-- TAB 5: MÃ SỐ THUẾ & NHÀ MẠNG -->
+    <div id="tab-tax" class="hidden grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- TAX ID VALIDATOR -->
+      <div class="bg-slate-800/80 border border-slate-700/80 rounded-2xl p-6 shadow-xl space-y-4">
+        <h2 class="text-lg font-bold text-slate-200 flex items-center gap-2">
+          <i class="fa-solid fa-file-invoice text-rose-400"></i> Tra cứu Mã số thuế (MST) Modulo-11
+        </h2>
+        <div>
+          <label class="block text-xs font-medium text-slate-400 mb-1">Mã số thuế (10 số, 13 số hoặc CCCD 12 số):</label>
+          <input
+            id="tax-input"
+            type="text"
+            value="0300588569"
+            class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-slate-100 font-mono text-base focus:outline-none focus:border-rose-500"
+          />
+        </div>
+        <div class="flex flex-wrap gap-2 text-xs">
+          <button onclick="setTax('0300588569')" class="px-2 py-1 bg-slate-900 hover:bg-slate-700 border border-slate-700 rounded-lg">Vinamilk</button>
+          <button onclick="setTax('0100109106')" class="px-2 py-1 bg-slate-900 hover:bg-slate-700 border border-slate-700 rounded-lg">Viettel</button>
+          <button onclick="setTax('0101245486')" class="px-2 py-1 bg-slate-900 hover:bg-slate-700 border border-slate-700 rounded-lg">Vingroup</button>
+          <button onclick="setTax('0100109106-001')" class="px-2 py-1 bg-slate-900 hover:bg-slate-700 border border-slate-700 rounded-lg">Chi nhánh (13 số)</button>
+          <button onclick="setTax('0100109107')" class="px-2 py-1 bg-rose-950/60 hover:bg-rose-900 border border-rose-700 text-rose-300 rounded-lg">⚠️ Sai checksum</button>
+        </div>
+        <div id="tax-result" class="pt-2"></div>
+        <div class="pt-3 border-t border-slate-700/80 text-xs text-slate-400 flex items-center justify-between">
+          <span>Package: <code class="text-rose-400">@llein/vn-tax-id-validator</code></span>
+          <span class="px-2 py-0.5 rounded bg-rose-500/20 text-rose-300 font-mono">TT 105/2020 ✅</span>
+        </div>
+      </div>
+
+      <!-- PHONE CARRIER -->
+      <div class="bg-slate-800/80 border border-slate-700/80 rounded-2xl p-6 shadow-xl space-y-4">
+        <h2 class="text-lg font-bold text-slate-200 flex items-center gap-2">
+          <i class="fa-solid fa-tower-cell text-sky-400"></i> Nhận diện Nhà mạng & E.164
+        </h2>
+        <div>
+          <label class="block text-xs font-medium text-slate-400 mb-1">Số điện thoại di động Việt Nam:</label>
+          <input
+            id="phone-input"
+            type="text"
+            value="+84987654321"
+            class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-slate-100 font-mono text-base focus:outline-none focus:border-sky-500"
+          />
+        </div>
+        <div class="flex flex-wrap gap-2 text-xs">
+          <button onclick="setPhone('(+84) 987 654 321')" class="px-2 py-1 bg-slate-900 hover:bg-slate-700 border border-slate-700 rounded-lg">Viettel (+84 ngoặc)</button>
+          <button onclick="setPhone('0912345678')" class="px-2 py-1 bg-slate-900 hover:bg-slate-700 border border-slate-700 rounded-lg">VinaPhone (091)</button>
+          <button onclick="setPhone('0909090909')" class="px-2 py-1 bg-slate-900 hover:bg-slate-700 border border-slate-700 rounded-lg">MobiFone (090)</button>
+          <button onclick="setPhone('(028) 3822 1234')" class="px-2 py-1 bg-emerald-950/60 hover:bg-emerald-900 border border-emerald-700 text-emerald-300 rounded-lg">☎️ Cố định TP.HCM</button>
+          <button onclick="setPhone('01681234567')" class="px-2 py-1 bg-sky-950/60 hover:bg-sky-900 border border-sky-700 text-sky-300 rounded-lg">🔄 11 số cũ (0168)</button>
+          <button onclick="setPhone('0551234567')" class="px-2 py-1 bg-slate-900 hover:bg-slate-700 border border-slate-700 rounded-lg">Wintel (055)</button>
+        </div>
+        <div id="phone-result" class="pt-2"></div>
+        <div class="pt-3 border-t border-slate-700/80 text-xs text-slate-400 flex items-center justify-between">
+          <span>Package: <code class="text-sky-400">@llein/vn-phone-carrier</code></span>
+          <span class="px-2 py-0.5 rounded bg-sky-500/20 text-sky-300 font-mono">11->10 Digit Ready ✅</span>
+        </div>
+      </div>
+    </div>
   </div>
 
   <script>
@@ -325,39 +388,48 @@
       const vietqrTab = document.getElementById('tab-vietqr');
       const currencyTab = document.getElementById('tab-currency');
       const plateTab = document.getElementById('tab-plate');
+      const taxTab = document.getElementById('tab-tax');
 
       const cccdBtn = document.getElementById('tab-cccd-btn');
       const vietqrBtn = document.getElementById('tab-vietqr-btn');
       const currencyBtn = document.getElementById('tab-currency-btn');
       const plateBtn = document.getElementById('tab-plate-btn');
+      const taxBtn = document.getElementById('tab-tax-btn');
 
-      const inactiveClass = 'px-4 py-2 rounded-lg text-xs md:text-sm font-semibold transition-all text-slate-400 hover:text-white';
+      const inactiveClass = 'px-3.5 py-2 rounded-lg text-xs md:text-sm font-semibold transition-all text-slate-400 hover:text-white';
 
       cccdTab.classList.add('hidden');
       vietqrTab.classList.add('hidden');
       currencyTab.classList.add('hidden');
       plateTab.classList.add('hidden');
+      taxTab.classList.add('hidden');
 
       cccdBtn.className = inactiveClass;
       vietqrBtn.className = inactiveClass;
       currencyBtn.className = inactiveClass;
       plateBtn.className = inactiveClass;
+      taxBtn.className = inactiveClass;
 
       if (tab === 'cccd') {
         cccdTab.classList.remove('hidden');
-        cccdBtn.className = 'px-4 py-2 rounded-lg text-xs md:text-sm font-semibold transition-all bg-indigo-600 text-white shadow-lg shadow-indigo-600/30';
+        cccdBtn.className = 'px-3.5 py-2 rounded-lg text-xs md:text-sm font-semibold transition-all bg-indigo-600 text-white shadow-lg shadow-indigo-600/30';
       } else if (tab === 'vietqr') {
         vietqrTab.classList.remove('hidden');
-        vietqrBtn.className = 'px-4 py-2 rounded-lg text-xs md:text-sm font-semibold transition-all bg-emerald-600 text-white shadow-lg shadow-emerald-600/30';
+        vietqrBtn.className = 'px-3.5 py-2 rounded-lg text-xs md:text-sm font-semibold transition-all bg-emerald-600 text-white shadow-lg shadow-emerald-600/30';
         updateVietQR();
       } else if (tab === 'currency') {
         currencyTab.classList.remove('hidden');
-        currencyBtn.className = 'px-4 py-2 rounded-lg text-xs md:text-sm font-semibold transition-all bg-amber-600 text-white shadow-lg shadow-amber-600/30';
+        currencyBtn.className = 'px-3.5 py-2 rounded-lg text-xs md:text-sm font-semibold transition-all bg-amber-600 text-white shadow-lg shadow-amber-600/30';
         renderCurrencyWords();
       } else if (tab === 'plate') {
         plateTab.classList.remove('hidden');
-        plateBtn.className = 'px-4 py-2 rounded-lg text-xs md:text-sm font-semibold transition-all bg-cyan-600 text-white shadow-lg shadow-cyan-600/30';
+        plateBtn.className = 'px-3.5 py-2 rounded-lg text-xs md:text-sm font-semibold transition-all bg-cyan-600 text-white shadow-lg shadow-cyan-600/30';
         renderPlate();
+      } else if (tab === 'tax') {
+        taxTab.classList.remove('hidden');
+        taxBtn.className = 'px-3.5 py-2 rounded-lg text-xs md:text-sm font-semibold transition-all bg-rose-600 text-white shadow-lg shadow-rose-600/30';
+        renderTax();
+        renderPhone();
       }
     }
 
@@ -642,9 +714,7 @@
         return;
       }
 
-      // Check military
       let vehicle = 'Ô tô dân sự';
-      let color = 'white';
       let prov = 'Chưa xác định';
       let formatted = text;
       let compact = text;
@@ -655,7 +725,6 @@
         compact = `${p1}${p2}${nums}`;
         formatted = `${p1}${p2}-${nums.slice(0, 2)}.${nums.slice(2)}`;
         vehicle = 'Xe Quân đội';
-        color = 'red';
         prov = 'Bộ Quốc Phòng / Quân đội';
       } else {
         const provCode = `${toDig(text[0])}${toDig(text[1])}`;
@@ -716,11 +785,187 @@
       `;
     }
 
+    // --- TAX ID & TELCO LOGIC ---
+    const TAX_WEIGHTS = [31, 29, 23, 19, 17, 13, 7, 5, 3];
+    const TAX_PROVINCES = {
+      '01': 'Hà Nội', '02': 'TP. Hồ Chí Minh', '03': 'TP. Hồ Chí Minh', '04': 'Đà Nẵng', '05': 'Hải Phòng'
+    };
+
+    function setTax(val) {
+      document.getElementById('tax-input').value = val;
+      renderTax();
+    }
+
+    function renderTax() {
+      const raw = document.getElementById('tax-input').value.trim();
+      const container = document.getElementById('tax-result');
+      const clean = raw.replace(/\s+/g, '');
+
+      let base = clean;
+      let branch = '';
+      if (clean.includes('-')) {
+        const p = clean.split('-');
+        base = p[0];
+        branch = p[1];
+      } else if (clean.length === 13) {
+        base = clean.slice(0, 10);
+        branch = clean.slice(10);
+      }
+
+      if (!/^\d{10}$/.test(base)) {
+        container.innerHTML = `<div class="p-3 bg-rose-500/10 border border-rose-500/20 text-rose-300 text-xs rounded-xl">Mã số thuế không đúng cấu trúc 10 số hoặc 13 số.</div>`;
+        return;
+      }
+
+      let sum = 0;
+      for (let i = 0; i < 9; i++) {
+        sum += parseInt(base[i], 10) * TAX_WEIGHTS[i];
+      }
+      let check = 10 - (sum % 11);
+      if (check === 10 || check === 11) check = 0;
+      const actual = parseInt(base[9], 10);
+      const isValid = actual === check;
+      const provName = TAX_PROVINCES[base.slice(0, 2)] || ('Tỉnh/TP mã ' + base.slice(0, 2));
+
+      container.innerHTML = `
+        <div class="p-3 bg-slate-900 rounded-xl border border-slate-700/60 text-xs space-y-2">
+          <div class="flex justify-between items-center">
+            <span class="text-slate-400">Trạng thái Checksum:</span>
+            <span class="font-bold ${isValid ? 'text-emerald-400' : 'text-rose-400'}">
+              ${isValid ? '✅ Hợp lệ (Modulo-11 OK)' : '❌ Sai chữ số kiểm tra (Expected ' + check + ', got ' + actual + ')'}
+            </span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-400">Loại MST:</span>
+            <span class="font-semibold text-slate-200">${branch ? 'Chi nhánh / Đơn vị trực thuộc (' + branch + ')' : 'Doanh nghiệp độc lập'}</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-400">Cơ quan thuế cấp:</span>
+            <span class="font-semibold text-slate-200">${provName}</span>
+          </div>
+        </div>
+      `;
+    }
+
+    // Telco Logic
+    const CARRIER_MAP = {
+      '086': 'Viettel', '096': 'Viettel', '097': 'Viettel', '098': 'Viettel',
+      '032': 'Viettel', '033': 'Viettel', '034': 'Viettel', '035': 'Viettel',
+      '036': 'Viettel', '037': 'Viettel', '038': 'Viettel', '039': 'Viettel',
+      '088': 'VinaPhone', '091': 'VinaPhone', '094': 'VinaPhone', '081': 'VinaPhone',
+      '082': 'VinaPhone', '083': 'VinaPhone', '084': 'VinaPhone', '085': 'VinaPhone',
+      '089': 'MobiFone', '090': 'MobiFone', '093': 'MobiFone', '070': 'MobiFone',
+      '079': 'MobiFone', '077': 'MobiFone', '076': 'MobiFone', '078': 'MobiFone',
+      '092': 'Vietnamobile', '056': 'Vietnamobile', '058': 'Vietnamobile',
+      '055': 'Wintel', '087': 'I-Telecom', '099': 'Gmobile'
+    };
+
+    const OLD_TO_NEW = {
+      '0162': '032', '0163': '033', '0164': '034', '0165': '035',
+      '0166': '036', '0167': '037', '0168': '038', '0169': '039',
+      '0120': '070', '0121': '079', '0122': '077', '0126': '076', '0128': '078',
+      '0123': '083', '0124': '084', '0125': '085', '0127': '081', '0129': '082'
+    };
+
+    function setPhone(val) {
+      document.getElementById('phone-input').value = val;
+      renderPhone();
+    }
+
+    const LANDLINE_MAP = {
+      '024': 'Hà Nội', '028': 'TP. Hồ Chí Minh', '0236': 'Đà Nẵng', '0225': 'Hải Phòng', '0292': 'Cần Thơ',
+      '0274': 'Bình Dương', '0251': 'Đồng Nai', '0254': 'Bà Rịa - Vũng Tàu'
+    };
+
+    function renderPhone() {
+      const raw = document.getElementById('phone-input').value.trim();
+      const container = document.getElementById('phone-result');
+
+      let clean = raw.replace(/[\s().,-]+/g, '');
+      if (clean.startsWith('+84')) clean = '0' + clean.slice(3);
+      else if (clean.startsWith('0084')) clean = '0' + clean.slice(4);
+      else if (clean.startsWith('84') && clean.length >= 11) clean = '0' + clean.slice(2);
+      clean = clean.replace(/\D/g, '');
+
+      let migrated = false;
+      if (clean.length === 11 && clean.startsWith('01')) {
+        const oldPref = clean.slice(0, 4);
+        if (OLD_TO_NEW[oldPref]) {
+          clean = OLD_TO_NEW[oldPref] + clean.slice(4);
+          migrated = true;
+        }
+      }
+
+      // 1. Mobile
+      if (/^0\d{9}$/.test(clean)) {
+        const pref = clean.slice(0, 3);
+        const carrier = CARRIER_MAP[pref] || 'Chưa xác định';
+        const pretty = `${clean.slice(0, 4)} ${clean.slice(4, 7)} ${clean.slice(7)}`;
+        const masked = `${clean.slice(0, 4)}***${clean.slice(7)}`;
+        const e164 = '+84' + clean.slice(1);
+
+        container.innerHTML = `
+          <div class="p-3 bg-slate-900 rounded-xl border border-slate-700/60 text-xs space-y-2">
+            <div class="flex justify-between items-center">
+              <span class="text-slate-400">Loại & Nhà mạng:</span>
+              <span class="font-bold text-sky-400 text-sm">📱 Di động - ${carrier}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-slate-400">Định dạng hiển thị:</span>
+              <span class="font-mono font-semibold text-slate-100">${pretty}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-slate-400">Chuẩn quốc tế E.164:</span>
+              <span class="font-mono text-emerald-400">${e164}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-slate-400">Mã hóa che OTP:</span>
+              <span class="font-mono text-amber-300">${masked}</span>
+            </div>
+            ${migrated ? `<div class="text-[11px] text-sky-300 bg-sky-950/40 p-1.5 rounded">🔄 Tự động chuyển đổi từ đầu số 11 số cũ sang 10 số.</div>` : ''}
+          </div>
+        `;
+        return;
+      }
+
+      // 2. Landline
+      if (/^02\d{9}$/.test(clean)) {
+        const pref = clean.slice(0, 3);
+        const area = LANDLINE_MAP[pref] || LANDLINE_MAP[clean.slice(0, 4)] || 'Cố định tỉnh/thành';
+        const pretty = `${pref} ${clean.slice(3, 7)} ${clean.slice(7)}`;
+        const e164 = '+84' + clean.slice(1);
+
+        container.innerHTML = `
+          <div class="p-3 bg-slate-900 rounded-xl border border-slate-700/60 text-xs space-y-2">
+            <div class="flex justify-between items-center">
+              <span class="text-slate-400">Loại đường truyền:</span>
+              <span class="font-bold text-emerald-400 text-sm">☎️ Điện thoại Cố định (${area})</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-slate-400">Định dạng hiển thị:</span>
+              <span class="font-mono font-semibold text-slate-100">${pretty}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-slate-400">Chuẩn quốc tế E.164:</span>
+              <span class="font-mono text-emerald-400">${e164}</span>
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = `<div class="p-3 bg-rose-500/10 border border-rose-500/20 text-rose-300 text-xs rounded-xl">Số điện thoại không hợp lệ (Di động: 10 chữ số, Cố định: 11 số bắt đầu bằng 02).</div>`;
+    }
+
     document.getElementById('cccd-input').addEventListener('input', renderCCCD);
     document.getElementById('currency-input').addEventListener('input', renderCurrencyWords);
     document.getElementById('plate-input').addEventListener('input', renderPlate);
+    document.getElementById('tax-input').addEventListener('input', renderTax);
+    document.getElementById('phone-input').addEventListener('input', renderPhone);
     renderCCCD();
     renderPlate();
+    renderTax();
+    renderPhone();
   </script>
 </body>
 </html>

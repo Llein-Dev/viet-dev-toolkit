@@ -13,9 +13,8 @@ export const LETTER_TO_DIGIT: Record<string, string> = {
   A: '4',
   S: '5',
   G: '6',
-  b: '6',
-  T: '7',
-  B: '8'
+  B: '8',
+  T: '7'
 };
 
 export const DIGIT_TO_LETTER: Record<string, string> = {
@@ -32,29 +31,35 @@ export const DIGIT_TO_LETTER: Record<string, string> = {
 
 export function asDigit(ch: string): string {
   if (!ch) return '';
-  if (ch >= '0' && ch <= '9') return ch;
-  return LETTER_TO_DIGIT[ch] || ch;
+  const upper = ch.toUpperCase();
+  if (upper >= '0' && upper <= '9') return upper;
+  return LETTER_TO_DIGIT[upper] || upper;
 }
 
 export function asLetter(ch: string): string {
   if (!ch) return '';
-  if (ch >= 'A' && ch <= 'Z') return ch;
-  return DIGIT_TO_LETTER[ch] || ch;
+  const upper = ch.toUpperCase();
+  if (upper >= 'A' && upper <= 'Z') return upper;
+  return DIGIT_TO_LETTER[upper] || upper;
 }
 
 /**
  * Weighted confusion pairs for OCR fuzzy matching
  */
 const CONFUSION_PAIRS: Set<string> = new Set([
-  '0-O', 'O-0', '0-D', 'D-0', '0-Q', 'Q-0',
-  '1-I', 'I-1', '1-L', 'L-1', '1-T', 'T-1',
+  '0-O', 'O-0', '0-D', 'D-0', '0-Q', 'Q-0', '0-8', '8-0',
+  '1-I', 'I-1', '1-L', 'L-1', '1-T', 'T-1', '1-7', '7-1',
   '2-Z', 'Z-2',
   '3-E', 'E-3',
   '4-A', 'A-4',
   '5-S', 'S-5',
   '6-G', 'G-6', '6-C', 'C-6',
-  '8-B', 'B-8'
+  '8-B', 'B-8',
+  'U-V', 'V-U'
 ]);
+
+// Specialized 2-letter car series per Circular 24/2023
+const CAR_SPECIAL_SERIES = new Set(['LD', 'DA', 'MK', 'R', 'RM', 'KT', 'CD', 'T']);
 
 export interface CleanOptions {
   /** Expected vehicle type if known ahead of time */
@@ -116,7 +121,7 @@ export function cleanANPRText(raw: string, options?: CleanOptions): string {
  */
 export function cleanVietnamPlate(raw: string): PlateCleanResult {
   const result: PlateCleanResult = {
-    raw,
+    raw: raw || '',
     compact: '',
     formatted: '',
     vehicleType: 'unknown',
@@ -203,25 +208,36 @@ export function cleanVietnamPlate(raw: string): PlateCleanResult {
       hasSepAfterChar3 ||
       (text.length === 9 && isChar3Digit && !/[A-Z]/.test(text[3])));
 
+  const isChar3GenuineLetter = /[A-Z]/.test(char3) && char3 !== 'I' && char3 !== 'O' && char3 !== 'L';
+
   if (isMotorbike) {
-    const series = `${char2AsLetter}${asDigit(char3)}`;
+    const series = isChar3GenuineLetter
+      ? `${char2AsLetter}${asLetter(char3)}`
+      : `${char2AsLetter}${asDigit(char3)}`;
     const numbers = text.slice(4).split('').map(asDigit).join('');
     result.compact = `${provCode}${series}${numbers}`;
     result.formatted = `${provCode}-${series} ${formatPlateNumbers(numbers)}`;
     result.vehicleType = 'motorbike';
-    result.isValid = /^[0-9]{2}[A-Z][0-9]{5,6}$/.test(result.compact);
+    result.isValid = /^[0-9]{2}[A-Z][0-9A-Z][0-9]{4,5}$/.test(result.compact);
     result.score = result.isValid ? 0.9 : 0.65;
     return result;
   }
 
-  // Check 2-letter car series (e.g. 51AB 12345 or 51LD 12345)
-  const isChar3GenuineLetter = /[A-Z]/.test(char3) && char3 !== 'I' && char3 !== 'O' && char3 !== 'L';
+  // Check 2-letter series (e.g. 29AA 12345 or 51LD 12345)
   if (isChar3GenuineLetter && text.length >= 8 && !hasSepAfterChar2) {
     const series = `${char2AsLetter}${char3}`;
     const numbers = text.slice(4).split('').map(asDigit).join('');
+    const isSpecialCar = CAR_SPECIAL_SERIES.has(series);
+
     result.compact = `${provCode}${series}${numbers}`;
-    result.formatted = `${provCode}${series}-${formatPlateNumbers(numbers)}`;
-    result.vehicleType = 'car';
+    if (isSpecialCar) {
+      result.formatted = `${provCode}${series}-${formatPlateNumbers(numbers)}`;
+      result.vehicleType = 'car';
+    } else {
+      // Circular 24/2023 dual-letter motorbike series (e.g. 29-AA 123.45)
+      result.formatted = `${provCode}-${series} ${formatPlateNumbers(numbers)}`;
+      result.vehicleType = 'motorbike';
+    }
     result.isValid = /^[0-9]{2}[A-Z]{2}[0-9]{4,5}$/.test(result.compact);
     result.score = result.isValid ? 0.9 : 0.65;
     return result;

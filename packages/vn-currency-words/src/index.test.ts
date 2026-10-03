@@ -1,10 +1,29 @@
 import { describe, it, expect } from 'vitest';
-import { numberToWords, formatVND, docSoThanhChu } from './index';
+import { numberToWords, formatVND, docSoThanhChu, toVietnameseWords } from './index';
 
 describe('vn-currency-words', () => {
   it('should convert 0 to "Không đồng"', () => {
     expect(numberToWords(0)).toBe('Không đồng');
     expect(numberToWords('0')).toBe('Không đồng');
+  });
+
+  it('should handle decimal fractions correctly', () => {
+    // 0.5
+    expect(numberToWords(0.5)).toBe('Không phẩy năm đồng');
+    // 10.5
+    expect(numberToWords(10.5)).toBe('Mười phẩy năm đồng');
+    // 10.05
+    expect(numberToWords(10.05)).toBe('Mười phẩy không năm đồng');
+    // 10.50 with subunit
+    expect(numberToWords(10.5, { suffix: 'USD', decimalMode: 'subunit', subunitName: 'cent' })).toBe(
+      'Mười USD và năm mươi cent'
+    );
+  });
+
+  it('should handle strings with separators like commas, underscores, and spaces', () => {
+    expect(numberToWords('1_500_000')).toBe('Một triệu năm trăm nghìn đồng');
+    expect(numberToWords('1 000 000')).toBe('Một triệu đồng');
+    expect(numberToWords('2,500,000')).toBe('Hai triệu năm trăm nghìn đồng');
   });
 
   it('should convert 15 to "Mười lăm đồng" and 25 to "Hai mươi lăm đồng"', () => {
@@ -53,7 +72,8 @@ describe('vn-currency-words', () => {
     expect(formatVND(0)).toBe('0 ₫');
   });
 
-  it('should support alias docSoThanhChu', () => {
+  it('should support alias docSoThanhChu and toVietnameseWords', () => {
     expect(docSoThanhChu(2000000)).toBe('Hai triệu đồng');
+    expect(toVietnameseWords(2000000)).toBe('Hai triệu đồng');
   });
 });

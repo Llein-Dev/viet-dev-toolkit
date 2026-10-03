@@ -26,12 +26,29 @@ describe('vn-plate-format', () => {
     expect(res.formatted).toBe('29A-1234');
   });
 
-  it('should parse motorbike plate (e.g. 59-P1 123.45)', () => {
+  it('should parse traditional motorbike plate (e.g. 59-P1 123.45)', () => {
     const res = parseLicensePlate('59-P1 123.45');
     expect(res.isValid).toBe(true);
     expect(res.province).toBe('Thành phố Hồ Chí Minh');
     expect(res.vehicleType).toBe('motorbike');
     expect(res.formatted).toBe('59-P1 123.45');
+  });
+
+  it('should parse Circular 24/2023 dual-letter motorbike plate (e.g. 29-AA 123.45)', () => {
+    const res = parseLicensePlate('29AA12345');
+    expect(res.isValid).toBe(true);
+    expect(res.province).toBe('Thành phố Hà Nội');
+    expect(res.vehicleType).toBe('motorbike');
+    expect(res.formatted).toBe('29-AA 123.45');
+    expect(res.series).toBe('AA');
+  });
+
+  it('should parse joint-venture car LD plate (e.g. 29LD-123.45)', () => {
+    const res = parseLicensePlate('29LD12345');
+    expect(res.isValid).toBe(true);
+    expect(res.vehicleType).toBe('car');
+    expect(res.plateColor).toBe('yellow');
+    expect(res.formatted).toBe('29LD-123.45');
   });
 
   it('should parse electric motorbike plate (e.g. 29-MD1 123.45)', () => {

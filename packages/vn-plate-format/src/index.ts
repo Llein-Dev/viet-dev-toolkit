@@ -114,6 +114,9 @@ export const PROVINCE_PLATE_MAP: Record<string, string> = {
   '80': 'Cơ quan Trung ương'
 };
 
+// Specialized 2-letter series for Cars per Circular 24/2023
+const CAR_SPECIAL_SERIES = new Set(['LD', 'DA', 'MK', 'R', 'RM', 'KT', 'CD', 'T']);
+
 // Military symbols (Red plates)
 const MILITARY_PREFIXES: Record<string, string> = {
   TM: 'Bộ Tổng tham mưu',
@@ -132,6 +135,13 @@ const MILITARY_PREFIXES: Record<string, string> = {
 };
 
 /**
+ * Format 4 or 5 digits block (e.g. 1234 -> 1234, 12345 -> 123.45)
+ */
+function formatNums(nums: string): string {
+  return nums.length === 5 ? `${nums.slice(0, 3)}.${nums.slice(3)}` : nums;
+}
+
+/**
  * Parse and validate a Vietnamese vehicle license plate string
  */
 export function parseLicensePlate(plate: string): PlateParseResult {
@@ -140,7 +150,7 @@ export function parseLicensePlate(plate: string): PlateParseResult {
     .replace(/[^A-Z0-9]/g, '');
 
   if (clean.length < 6 || clean.length > 10) {
-    return { isValid: false, raw: plate, error: 'Độ dài ký tự biển số không hợp lệ' };
+    return { isValid: false, raw: plate || '', error: 'Độ dài ký tự biển số không hợp lệ' };
   }
 
   // 1. Check Red Military plate: e.g. TM-12-34
@@ -184,18 +194,17 @@ export function parseLicensePlate(plate: string): PlateParseResult {
   const provCode = clean.slice(0, 2);
   const province = PROVINCE_PLATE_MAP[provCode];
   if (!province) {
-    return { isValid: false, raw: plate, error: `Mã tỉnh thành "${provCode}" không hợp lệ` };
+    return { isValid: false, raw: plate || '', error: `Mã tỉnh thành "${provCode}" không hợp lệ` };
   }
 
   // Check Electric motorbike: e.g. 29-MD1 123.45 (clean: 29MD112345)
   const eleMatch = clean.match(/^(\d{2})(MD\d?|MĐ\d?)(\d{4,5})$/);
   if (eleMatch) {
     const [, prov, series, nums] = eleMatch;
-    const formattedNums = nums.length === 5 ? `${nums.slice(0, 3)}.${nums.slice(3)}` : nums;
     return {
       isValid: true,
       raw: plate,
-      formatted: `${prov}-${series} ${formattedNums}`,
+      formatted: `${prov}-${series} ${formatNums(nums)}`,
       compact: clean,
       provinceCode: prov,
       province,
@@ -207,18 +216,16 @@ export function parseLicensePlate(plate: string): PlateParseResult {
     };
   }
 
-  // Check Car plates: 29A-123.45, 51K-999.99, 30G-1234 (1 letter or 2 letters like LD, DA, R)
-  // Car series: A, B, C, D, E, F, G, H, K, L, M, N, P, S, T, U, V, X, Y, Z or 2 letters LD, KT, DA
-  const carMatch = clean.match(/^(\d{2})([A-Z]{1,2})(\d{4,5})$/);
-  if (carMatch) {
-    const [, prov, series, nums] = carMatch;
-    const formattedNums = nums.length === 5 ? `${nums.slice(0, 3)}.${nums.slice(3)}` : nums;
-    const isCommercial = series.endsWith('E') || series === 'LD';
+  // Check Standard Car with 1 letter (e.g. 29A-123.45, 51K-999.99, 30G-1234)
+  const singleLetterCarMatch = clean.match(/^(\d{2})([A-Z])(\d{4,5})$/);
+  if (singleLetterCarMatch) {
+    const [, prov, series, nums] = singleLetterCarMatch;
+    const isCommercial = series.endsWith('E');
 
     return {
       isValid: true,
       raw: plate,
-      formatted: `${prov}${series}-${formattedNums}`,
+      formatted: `${prov}${series}-${formatNums(nums)}`,
       compact: clean,
       provinceCode: prov,
       province,
@@ -230,16 +237,55 @@ export function parseLicensePlate(plate: string): PlateParseResult {
     };
   }
 
-  // Check Motorbike plates: 59-P1 123.45 (clean: 59P112345), 29-B1 999.99
-  const bikeMatch = clean.match(/^(\d{2})([A-Z0-9]{2})(\d{4,5})$/);
+  // Check Specialized Car with 2 letters (LD, DA, MK, R, RM, KT, CD, T)
+  const specialCarMatch = clean.match(/^(\d{2})([A-Z]{2})(\d{4,5})$/);
+  if (specialCarMatch) {
+    const [, prov, series, nums] = specialCarMatch;
+    if (CAR_SPECIAL_SERIES.has(series)) {
+      let vehicleType: VehicleType = 'car';
+      if (series === 'R' || series === 'RM') vehicleType = 'trailer';
+      if (series === 'MK') vehicleType = 'tractor';
+
+      return {
+        isValid: true,
+        raw: plate,
+        formatted: `${prov}${series}-${formatNums(nums)}`,
+        compact: clean,
+        provinceCode: prov,
+        province,
+        series,
+        numbers: nums,
+        vehicleType,
+        plateColor: series === 'LD' ? 'yellow' : prov === '80' ? 'blue' : 'white',
+        isFiveDigits: nums.length === 5
+      };
+    }
+
+    // Under Circular 24/2023, dual letters not in special car set are MOTORBIKES (e.g. 29-AA 123.45)
+    return {
+      isValid: true,
+      raw: plate,
+      formatted: `${prov}-${series} ${formatNums(nums)}`,
+      compact: clean,
+      provinceCode: prov,
+      province,
+      series,
+      numbers: nums,
+      vehicleType: 'motorbike',
+      plateColor: prov === '80' ? 'blue' : 'white',
+      isFiveDigits: nums.length === 5
+    };
+  }
+
+  // Check Traditional Motorbike plates with 1 letter + 1 digit (e.g. 59-P1 123.45, 29-B1 999.99)
+  const bikeMatch = clean.match(/^(\d{2})([A-Z][0-9])(\d{4,5})$/);
   if (bikeMatch) {
     const [, prov, series, nums] = bikeMatch;
-    const formattedNums = nums.length === 5 ? `${nums.slice(0, 3)}.${nums.slice(3)}` : nums;
 
     return {
       isValid: true,
       raw: plate,
-      formatted: `${prov}-${series} ${formattedNums}`,
+      formatted: `${prov}-${series} ${formatNums(nums)}`,
       compact: clean,
       provinceCode: prov,
       province,

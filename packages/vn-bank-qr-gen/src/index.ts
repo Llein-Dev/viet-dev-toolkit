@@ -14,8 +14,9 @@ export interface BankInfo {
 }
 
 export interface VietQROptions {
-  bank: string; // BIN (e.g. '970422') or Code (e.g. 'MB', 'VCB', 'TCB')
+  bank: string; // BIN (e.g. '970422') or Code (e.g. 'MB', 'VCB', 'TCB', 'vietin', 'agri')
   accountNumber: string;
+  accountName?: string; // Beneficiary name (Tag 59 in EMVCo)
   amount?: number;
   message?: string;
   serviceType?: 'by_account' | 'by_card';
@@ -27,6 +28,7 @@ export interface VietQRResult {
   qrImageUrl: string;
   bank: BankInfo;
   accountNumber: string;
+  accountName?: string;
   amount?: number;
   message?: string;
 }
@@ -38,6 +40,7 @@ export interface ParsedVietQR {
   bankBin?: string;
   bank?: BankInfo;
   accountNumber?: string;
+  accountName?: string;
   amount?: number;
   message?: string;
   serviceCode?: string;
@@ -71,6 +74,20 @@ export const VIETNAM_BANKS: BankInfo[] = [
   { bin: '970430', code: 'PGB', shortName: 'PGBank', name: 'Ngân hàng TMCP Thịnh vượng và Phát triển', supportNapas247: true },
   { bin: '970405', code: 'VBA', shortName: 'Agribank', name: 'Ngân hàng Nông nghiệp và Phát triển Nông thôn Việt Nam', supportNapas247: true },
   { bin: '970414', code: 'OceanBank', shortName: 'OceanBank', name: 'Ngân hàng Thương mại TNHH MTV Đại Dương', supportNapas247: true },
+  { bin: '970408', code: 'GPB', shortName: 'GPBank', name: 'Ngân hàng Thương mại TNHH MTV Dầu khí Toàn Cầu', supportNapas247: true },
+  { bin: '970444', code: 'CBB', shortName: 'CBBank', name: 'Ngân hàng Thương mại TNHH MTV Xây dựng Việt Nam', supportNapas247: true },
+  { bin: '970412', code: 'PVcomBank', shortName: 'PVcomBank', name: 'Ngân hàng TMCP Đại chúng Việt Nam', supportNapas247: true },
+  { bin: '970406', code: 'DongABank', shortName: 'DongABank', name: 'Ngân hàng TMCP Đông Á', supportNapas247: true },
+  { bin: '970433', code: 'VIETBANK', shortName: 'VietBank', name: 'Ngân hàng TMCP Việt Nam Thương Tín', supportNapas247: true },
+  { bin: '970425', code: 'ABB', shortName: 'ABBank', name: 'Ngân hàng TMCP An Bình', supportNapas247: true },
+  { bin: '970439', code: 'PBVN', shortName: 'PublicBank', name: 'Ngân hàng TNHH MTV Public Việt Nam', supportNapas247: true },
+  { bin: '970442', code: 'HLBVN', shortName: 'HongLeong', name: 'Ngân hàng TNHH MTV Hong Leong Việt Nam', supportNapas247: true },
+  { bin: '422589', code: 'CIMB', shortName: 'CIMB', name: 'Ngân hàng TNHH MTV CIMB Việt Nam', supportNapas247: true },
+  { bin: '970458', code: 'UOB', shortName: 'UOB', name: 'Ngân hàng TNHH MTV United Overseas Bank Việt Nam', supportNapas247: true },
+  { bin: '970410', code: 'SCVN', shortName: 'StandardChartered', name: 'Ngân hàng TNHH MTV Standard Chartered Việt Nam', supportNapas247: true },
+  { bin: '458761', code: 'HSBC', shortName: 'HSBC', name: 'Ngân hàng TNHH MTV HSBC Việt Nam', supportNapas247: true },
+  { bin: '970434', code: 'IVB', shortName: 'IndovinaBank', name: 'Ngân hàng TNHH Indovina', supportNapas247: true },
+  { bin: '970421', code: 'VRB', shortName: 'VRB', name: 'Ngân hàng Liên doanh Việt - Nga', supportNapas247: true },
   { bin: '970446', code: 'COOPBANK', shortName: 'Co-opBank', name: 'Ngân hàng Hợp tác xã Việt Nam', supportNapas247: true },
   { bin: '970424', code: 'SHBVN', shortName: 'ShinhanBank', name: 'Ngân hàng TNHH MTV Shinhan Việt Nam', supportNapas247: true },
   { bin: '970457', code: 'Wooribank', shortName: 'WooriBank', name: 'Ngân hàng TNHH MTV Woori Việt Nam', supportNapas247: true },
@@ -80,15 +97,27 @@ export const VIETNAM_BANKS: BankInfo[] = [
   { bin: '971011', code: 'VNPTMoney', shortName: 'VNPTMoney', name: 'Tập đoàn Bưu chính Viễn thông Việt Nam', supportNapas247: true }
 ];
 
+/**
+ * Find a bank by BIN, Code, Short name, or partial keyword
+ */
 export function findBank(keyword: string): BankInfo | undefined {
   if (!keyword) return undefined;
   const clean = keyword.trim().toUpperCase();
 
-  return VIETNAM_BANKS.find(
+  // 1. Exact match on BIN, Code, or ShortName
+  const exact = VIETNAM_BANKS.find(
     (b) =>
       b.bin === clean ||
       b.code.toUpperCase() === clean ||
-      b.shortName.toUpperCase() === clean ||
+      b.shortName.toUpperCase() === clean
+  );
+  if (exact) return exact;
+
+  // 2. Partial match on shortName, code, or name
+  return VIETNAM_BANKS.find(
+    (b) =>
+      b.shortName.toUpperCase().includes(clean) ||
+      b.code.toUpperCase().includes(clean) ||
       b.name.toUpperCase().includes(clean)
   );
 }
@@ -124,6 +153,7 @@ export function generateVietQR(options: VietQROptions): VietQRResult {
   const {
     bank: bankQuery,
     accountNumber,
+    accountName,
     amount,
     message,
     serviceType = 'by_account',
@@ -157,23 +187,30 @@ export function generateVietQR(options: VietQROptions): VietQRResult {
     (amount && amount > 0 ? tlv('54', String(Math.round(amount))) : '') +
     tlv('58', 'VN'); // Country code
 
-  // 3. Additional Data (Tag 62)
+  // 3. Optional Beneficiary Name (Tag 59)
+  if (accountName && accountName.trim()) {
+    const cleanName = accountName.trim().toUpperCase().slice(0, 25);
+    payload += tlv('59', cleanName);
+  }
+
+  // 4. Additional Data (Tag 62)
   if (message) {
     const cleanMsg = message.slice(0, 25);
     const sub08 = tlv('08', cleanMsg);
     payload += tlv('62', sub08);
   }
 
-  // 4. Append Tag 63 (CRC16)
+  // 5. Append Tag 63 (CRC16)
   payload += '6304';
   const checksum = crc16CCITT(payload);
   const qrContent = payload + checksum;
 
-  // 5. Image URL (VietQR CDN)
+  // 6. Image URL (VietQR CDN)
   const baseUrl = `https://img.vietqr.io/image/${bank.bin}-${cleanAcc}-${template}.png`;
   const params = new URLSearchParams();
   if (amount && amount > 0) params.set('amount', String(Math.round(amount)));
   if (message) params.set('addInfo', message);
+  if (accountName) params.set('accountName', accountName.trim());
   const qs = params.toString();
   const qrImageUrl = qs ? `${baseUrl}?${qs}` : baseUrl;
 
@@ -182,6 +219,7 @@ export function generateVietQR(options: VietQROptions): VietQRResult {
     qrImageUrl,
     bank,
     accountNumber: cleanAcc,
+    accountName: accountName ? accountName.trim() : undefined,
     amount,
     message
   };
@@ -208,6 +246,7 @@ export function parseVietQR(qrString: string): ParsedVietQR {
 
   let bankBin: string | undefined;
   let accountNumber: string | undefined;
+  let accountName: string | undefined;
   let amount: number | undefined;
   let message: string | undefined;
   let serviceCode: string | undefined;
@@ -250,6 +289,8 @@ export function parseVietQR(qrString: string): ParsedVietQR {
       }
     } else if (tag === '54') {
       amount = parseFloat(val);
+    } else if (tag === '59') {
+      accountName = val;
     } else if (tag === '62') {
       // Parse Nested Tag 62 (Additional Data)
       let innerPos = 0;
@@ -274,6 +315,7 @@ export function parseVietQR(qrString: string): ParsedVietQR {
     bankBin,
     bank,
     accountNumber,
+    accountName,
     amount,
     message,
     serviceCode

@@ -70,6 +70,11 @@ describe('vn-tax-id-validator', () => {
       expect(res.type).toBe('personal_cccd');
       expect(res.formatted).toBe('001095012345');
     });
+
+    it('should reject invalid CCCD province codes', () => {
+      expect(isValidTaxId('000000000000')).toBe(false);
+      expect(isValidTaxId('999095012345')).toBe(false);
+    });
   });
 
   describe('Invalid Tax IDs', () => {
@@ -78,6 +83,13 @@ describe('vn-tax-id-validator', () => {
       const res = validateTaxId('0100109107');
       expect(res.isValid).toBe(false);
       expect(res.error).toContain('Invalid Modulo-11 checksum');
+    });
+
+    it('should reject unknown province codes', () => {
+      // 99 is not a registered tax province code in Vietnam
+      const res = validateTaxId('9900109106');
+      expect(res.isValid).toBe(false);
+      expect(res.error).toContain('Invalid tax province code');
     });
 
     it('should reject non-numeric characters', () => {

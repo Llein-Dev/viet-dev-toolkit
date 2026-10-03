@@ -32,6 +32,16 @@ describe('anpr-plate-cleaner', () => {
       expect(res.vehicleType).toBe('motorbike');
     });
 
+    it('should classify Circular 24/2023 dual-letter motorbike plate accurately', () => {
+      const raw = '29-AA 123.45';
+      const res = cleanVietnamPlate(raw);
+
+      expect(res.isValid).toBe(true);
+      expect(res.compact).toBe('29AA12345');
+      expect(res.formatted).toBe('29-AA 123.45');
+      expect(res.vehicleType).toBe('motorbike');
+    });
+
     it('should fix letters misread in province and series positions for motorbike', () => {
       // S9 -> 59, PI -> P1, I23.45 -> 123.45
       const raw = 'S9-PI\nI23.45';

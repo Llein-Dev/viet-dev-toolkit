@@ -5,7 +5,9 @@ import {
   parseCCCDQr,
   getRenewalMilestones,
   generateMockCCCD,
-  PROVINCE_MAP
+  parseCMND,
+  isValidCMND,
+  formatCCCD
 } from './index';
 
 describe('vn-cccd-parser', () => {
@@ -34,12 +36,38 @@ describe('vn-cccd-parser', () => {
     expect(result.century).toContain('Thế kỷ 21');
   });
 
-  it('should calculate renewal milestones accurately (25, 40, 60)', () => {
+  it('should calculate renewal milestones and expiry accurately (25, 40, 60)', () => {
     const milestones = getRenewalMilestones(2000, 2024);
     expect(milestones.age25Year).toBe(2025);
     expect(milestones.age40Year).toBe(2040);
     expect(milestones.age60Year).toBe(2060);
     expect(milestones.nextRenewalYear).toBe(2025);
+    expect(milestones.cardExpiryYear).toBe(2025);
+
+    // Citizen over 60
+    const over60 = getRenewalMilestones(1950, 2024);
+    expect(over60.nextRenewalYear).toBeNull();
+    expect(over60.cardExpiryYear).toBeNull();
+  });
+
+  it('should format CCCD for display', () => {
+    expect(formatCCCD('001095012345')).toBe('001 095 012345');
+    expect(formatCCCD('001095012345', 'segmented')).toBe('001 0 95 012345');
+  });
+
+  it('should parse legacy 9-digit CMND', () => {
+    const resHanoi = parseCMND('012345678');
+    expect(resHanoi.isValid).toBe(true);
+    expect(resHanoi.provinceCode).toBe('01');
+    expect(resHanoi.province).toBe('Thành phố Hà Nội');
+
+    const resHCMC = parseCMND('023456789');
+    expect(resHCMC.isValid).toBe(true);
+    expect(resHCMC.province).toBe('Thành phố Hồ Chí Minh');
+
+    expect(isValidCMND('012345678')).toBe(true);
+    expect(isValidCMND('999999999')).toBe(false);
+    expect(isValidCMND('12345')).toBe(false);
   });
 
   it('should parse Chip CCCD QR Code string accurately', () => {

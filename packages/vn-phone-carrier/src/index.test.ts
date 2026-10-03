@@ -13,6 +13,7 @@ describe('vn-phone-carrier', () => {
       const p1 = parseVNPhone('0987654321');
       expect(p1.isValid).toBe(true);
       expect(p1.carrier).toBe('Viettel');
+      expect(p1.lineType).toBe('mobile');
       expect(p1.prefix).toBe('098');
 
       const p2 = parseVNPhone('0388889999');
@@ -41,12 +42,45 @@ describe('vn-phone-carrier', () => {
     });
   });
 
-  describe('International E.164 and messy inputs', () => {
-    it('should handle +84 international format', () => {
-      const res = parseVNPhone('+84987654321');
+  describe('Landline and Hotline numbers', () => {
+    it('should parse Hanoi and HCMC landline phone numbers', () => {
+      const hanoi = parseVNPhone('(024) 3823 4567');
+      expect(hanoi.isValid).toBe(true);
+      expect(hanoi.lineType).toBe('landline');
+      expect(hanoi.areaName).toBe('Hà Nội');
+      expect(hanoi.prefix).toBe('024');
+
+      const hcmc = parseVNPhone('028.3822.1234');
+      expect(hcmc.isValid).toBe(true);
+      expect(hcmc.lineType).toBe('landline');
+      expect(hcmc.areaName).toBe('TP. Hồ Chí Minh');
+      expect(hcmc.prefix).toBe('028');
+    });
+
+    it('should parse 1900 and 1800 hotline numbers', () => {
+      const tollfree = parseVNPhone('1800 1060');
+      expect(tollfree.isValid).toBe(true);
+      expect(tollfree.lineType).toBe('hotline');
+
+      const hotline = parseVNPhone('1900-123456');
+      expect(hotline.isValid).toBe(true);
+      expect(hotline.lineType).toBe('hotline');
+    });
+  });
+
+  describe('International E.164 and messy inputs with parentheses', () => {
+    it('should handle (+84) international format with parentheses', () => {
+      const res = parseVNPhone('(+84) 987 654 321');
       expect(res.isValid).toBe(true);
       expect(res.national).toBe('0987654321');
       expect(res.e164).toBe('+84987654321');
+      expect(res.carrier).toBe('Viettel');
+    });
+
+    it('should handle 0084 prefix', () => {
+      const res = parseVNPhone('0084987654321');
+      expect(res.isValid).toBe(true);
+      expect(res.national).toBe('0987654321');
       expect(res.carrier).toBe('Viettel');
     });
 

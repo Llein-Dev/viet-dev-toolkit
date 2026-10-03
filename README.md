@@ -14,10 +14,11 @@
 Trải nghiệm trực quan ngay trên trình duyệt không cần cài đặt:  
 👉 **[https://llein-dev.github.io/viet-dev-toolkit/](https://llein-dev.github.io/viet-dev-toolkit/)**
 
-- **Tab 1:** CCCD / VNeID 12 số & Chip QR Code Parser
+- **Tab 1:** CCCD / VNeID 12 số, CMND 9 số & Chip QR Code Parser
 - **Tab 2:** VietQR NAPAS247 Generator (54+ Ngân hàng Việt Nam)
-- **Tab 3:** Đọc số tiền thành chữ hóa đơn (Hỗ trợ giọng Bắc / Nam, BigInt, hàng nghìn tỷ)
+- **Tab 3:** Đọc số tiền thành chữ hóa đơn (Hỗ trợ giọng Bắc / Nam, BigInt, hàng nghìn tỷ, số thập phân)
 - **Tab 4:** Biển số xe & ANPR OCR Cleaner (Thông tư 24/2023/TT-BCA, 0/O, 1/I, 8/B Disambiguation)
+- **Tab 5:** Tra cứu Mã số thuế (MST 10 & 13 số) Modulo-11 & Nhận diện Nhà mạng Viettel/Vina/Mobi/Cố định
 
 ---
 

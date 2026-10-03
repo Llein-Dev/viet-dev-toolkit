@@ -56,6 +56,28 @@ export interface CurrencyWordsOptions {
 
 const DIGITS = ['không', 'một', 'hai', 'ba', 'bốn', 'năm', 'sáu', 'bảy', 'tám', 'chín'];
 
+function readTwoDigits(num: number, dialect: Dialect, useTu: boolean): string {
+  const t = Math.floor(num / 10);
+  const u = num % 10;
+  const words: string[] = [];
+
+  if (t === 0) {
+    words.push(DIGITS[u]);
+  } else if (t === 1) {
+    words.push('mười');
+    if (u === 5) words.push('lăm');
+    else if (u > 0) words.push(DIGITS[u]);
+  } else {
+    words.push(DIGITS[t], 'mươi');
+    if (u === 1) words.push('mốt');
+    else if (u === 4 && useTu) words.push('tư');
+    else if (u === 5) words.push('lăm');
+    else if (u > 0) words.push(DIGITS[u]);
+  }
+
+  return words.join(' ');
+}
+
 function readThreeDigits(
   chunk: string,
   isBeginning: boolean,
@@ -128,8 +150,8 @@ export function numberToWords(
 
   const thousandsWord = dialect === 'south' ? 'ngàn' : 'nghìn';
 
-  // Handle String / Number / BigInt conversion
-  let rawStr = String(amount).trim().replace(/,/g, '');
+  // Handle String / Number / BigInt conversion, strip spaces and formatting delimiters
+  let rawStr = String(amount).trim().replace(/[\s,_]/g, '');
   if (!rawStr) return 'không ' + suffix;
 
   let isNegative = false;
@@ -140,61 +162,78 @@ export function numberToWords(
 
   // Split integer and decimal parts
   const [intPartRaw, decPartRaw] = rawStr.split('.');
-  const intPart = (intPartRaw || '').replace(/^0+/, '') || '0';
+  const intPartClean = (intPartRaw || '').replace(/^0+/, '');
+  const hasDecPart = decPartRaw && !/^0+$/.test(decPartRaw);
 
-  if (intPart === '0' && (!decPartRaw || /^0+$/.test(decPartRaw))) {
-    const zeroStr = 'không ' + suffix;
-    return capitalizeFirst ? zeroStr.charAt(0).toUpperCase() + zeroStr.slice(1) : zeroStr;
-  }
+  let finalStr = '';
 
-  // Chunk integer part into groups of 3 digits from right to left
-  const chunks: string[] = [];
-  let temp = intPart;
-  while (temp.length > 0) {
-    chunks.unshift(temp.slice(-3));
-    temp = temp.slice(0, -3);
-  }
-
-  const resultWords: string[] = [];
-  const totalChunks = chunks.length;
-
-  for (let i = 0; i < totalChunks; i++) {
-    const chunk = chunks[i].padStart(3, '0');
-    if (chunk === '000') continue;
-
-    const isFirst = i === 0;
-    const chunkWords = readThreeDigits(chunk, isFirst, dialect, useTuInsteadOfBon);
-
-    // Scale naming based on powers of 1000:
-    // k = 0: '', k = 1: nghìn, k = 2: triệu, k = 3: tỷ, k = 4: nghìn tỷ, k = 5: triệu tỷ, k = 6: tỷ tỷ...
-    const k = totalChunks - 1 - i;
-    const baseScaleIndex = k % 3;
-    const tyCount = Math.floor(k / 3);
-
-    let scale = '';
-    if (baseScaleIndex === 1) scale = thousandsWord;
-    else if (baseScaleIndex === 2) scale = 'triệu';
-
-    if (tyCount > 0) {
-      const tyStr = Array(tyCount).fill('tỷ').join(' ');
-      scale = scale ? `${scale} ${tyStr}` : tyStr;
+  if (!intPartClean) {
+    // Integer part is zero
+    if (!hasDecPart) {
+      const zeroStr = 'không ' + suffix;
+      return capitalizeFirst ? zeroStr.charAt(0).toUpperCase() + zeroStr.slice(1) : zeroStr;
+    }
+    finalStr = 'không';
+  } else {
+    // Chunk integer part into groups of 3 digits from right to left
+    const chunks: string[] = [];
+    let temp = intPartClean;
+    while (temp.length > 0) {
+      chunks.unshift(temp.slice(-3));
+      temp = temp.slice(0, -3);
     }
 
-    if (chunkWords) {
-      resultWords.push(chunkWords + (scale ? ' ' + scale : ''));
-    }
-  }
+    const resultWords: string[] = [];
+    const totalChunks = chunks.length;
 
-  let finalStr = resultWords.join(' ').replace(/\s+/g, ' ').trim();
+    for (let i = 0; i < totalChunks; i++) {
+      const chunk = chunks[i].padStart(3, '0');
+      if (chunk === '000') continue;
+
+      const isFirst = i === 0;
+      const chunkWords = readThreeDigits(chunk, isFirst, dialect, useTuInsteadOfBon);
+
+      // Scale naming based on powers of 1000:
+      // k = 0: '', k = 1: nghìn, k = 2: triệu, k = 3: tỷ, k = 4: nghìn tỷ, k = 5: triệu tỷ, k = 6: tỷ tỷ...
+      const k = totalChunks - 1 - i;
+      const baseScaleIndex = k % 3;
+      const tyCount = Math.floor(k / 3);
+
+      let scale = '';
+      if (baseScaleIndex === 1) scale = thousandsWord;
+      else if (baseScaleIndex === 2) scale = 'triệu';
+
+      if (tyCount > 0) {
+        const tyStr = Array(tyCount).fill('tỷ').join(' ');
+        scale = scale ? `${scale} ${tyStr}` : tyStr;
+      }
+
+      if (chunkWords) {
+        resultWords.push(chunkWords + (scale ? ' ' + scale : ''));
+      }
+    }
+
+    finalStr = resultWords.join(' ').replace(/\s+/g, ' ').trim();
+  }
 
   // Handle decimal fraction
-  if (decPartRaw && !/^0+$/.test(decPartRaw)) {
-    const cleanDec = decPartRaw.slice(0, 2).padEnd(2, '0'); // Take up to 2 decimal places
-    const decWords = readThreeDigits(cleanDec.padStart(3, '0'), false, dialect, useTuInsteadOfBon);
+  if (hasDecPart) {
+    const rawDec = decPartRaw.slice(0, 2); // 2 decimal precision
+    const decVal = parseInt(rawDec.padEnd(2, '0'), 10);
 
     if (decimalMode === 'subunit') {
-      finalStr += ` ${suffix} và ${decWords} ${subunitName}`;
+      const subunitWords = readTwoDigits(decVal, dialect, useTuInsteadOfBon);
+      if (suffix) finalStr += ` ${suffix}`;
+      finalStr += ` và ${subunitWords} ${subunitName}`;
     } else {
+      let decWords = '';
+      if (rawDec.length === 1) {
+        decWords = DIGITS[parseInt(rawDec, 10)];
+      } else if (rawDec.startsWith('0')) {
+        decWords = `không ${DIGITS[parseInt(rawDec[1], 10)]}`;
+      } else {
+        decWords = readTwoDigits(decVal, dialect, useTuInsteadOfBon);
+      }
       finalStr += ` phẩy ${decWords}`;
       if (suffix) finalStr += ` ${suffix}`;
     }
@@ -216,8 +255,9 @@ export function numberToWords(
 }
 
 /**
- * Alias for numberToWords
+ * Aliases for numberToWords
  */
+export const toVietnameseWords = numberToWords;
 export const numberToVietnameseWords = numberToWords;
 export const docSoThanhChu = numberToWords;
 
