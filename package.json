@@ -8,7 +8,8 @@
   ],
   "scripts": {
     "test": "npm test --workspaces --if-present",
-    "build": "npm run build --workspaces --if-present"
+    "build": "npm run build --workspaces --if-present",
+    "publish:all": "node scripts/publish.js"
   },
   "devDependencies": {
     "@types/react": "^19.0.0",
