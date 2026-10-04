@@ -476,16 +476,29 @@ export function attachNumberMask(
       });
     }
 
-    // Dispatch native custom event
-    input.dispatchEvent(
-      new CustomEvent('number-mask-change', {
-        bubbles: true,
-        detail: {
+    // Dispatch native custom event if supported by runtime (browser or modern Node)
+    if (typeof CustomEvent !== 'undefined') {
+      input.dispatchEvent(
+        new CustomEvent('number-mask-change', {
+          bubbles: true,
+          detail: {
+            raw: unformatNumber(formatted, options),
+            formatted
+          }
+        })
+      );
+    } else if (typeof Event !== 'undefined') {
+      try {
+        const ev = new Event('number-mask-change', { bubbles: true }) as any;
+        ev.detail = {
           raw: unformatNumber(formatted, options),
           formatted
-        }
-      })
-    );
+        };
+        input.dispatchEvent(ev);
+      } catch {
+        // Safe fallback for legacy/mock test environments
+      }
+    }
   }
 
   // Pre-filter invalid characters before DOM mutation (zero flicker)
@@ -714,7 +727,9 @@ export function registerWebComponent(tagName = 'realtime-number-input'): void {
         prefix,
         suffix,
         onChange: (details) => {
-          this.dispatchEvent(new CustomEvent('change', { detail: details }));
+          if (typeof CustomEvent !== 'undefined') {
+            this.dispatchEvent(new CustomEvent('change', { detail: details }));
+          }
         }
       });
 
