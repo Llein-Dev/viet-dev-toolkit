@@ -139,6 +139,12 @@ export function getLocaleSeparators(locale = 'vi-VN'): {
   thousandSep: string;
   decimalSep: string;
 } {
+  const norm = (locale || 'vi-VN').toLowerCase().replace('_', '-');
+  if (norm === 'vi' || norm === 'vi-vn' || norm.startsWith('vi-')) {
+    // Official Vietnamese accounting, banking & tax standard (dots for thousands, comma for decimals)
+    return { thousandSep: '.', decimalSep: ',' };
+  }
+
   try {
     const parts = new Intl.NumberFormat(locale, { style: 'decimal' }).formatToParts(1000000.5);
     let thousandSep = ',';
