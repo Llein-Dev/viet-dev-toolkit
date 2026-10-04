@@ -1,6 +1,6 @@
 {
   "name": "@llein/vn-currency-words",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Convert numerical amounts to standardized Vietnamese words for banking, invoices, and legal contracts.",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
