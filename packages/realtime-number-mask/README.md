@@ -3,6 +3,8 @@
 > Ultra-modern, high-performance real-time number and currency input mask with **$O(1)$ Virtual Caret Projection Matrix**, native `Intl` locale auto-detection, zero-flicker W3C `beforeinput` interception, and Autonomous Web Component `<realtime-number-input>`.
 
 [![npm version](https://img.shields.io/npm/v/@llein/realtime-number-mask.svg?style=flat-square)](https://www.npmjs.com/package/@llein/realtime-number-mask)
+[![Zero Dependencies](https://img.shields.io/badge/dependencies-0-success.svg?style=flat-square)](https://www.npmjs.com/package/@llein/realtime-number-mask)
+[![bundle size](https://img.shields.io/badge/bundle%20size-%3C%203KB-success.svg?style=flat-square)](https://www.npmjs.com/package/@llein/realtime-number-mask)
 [![license](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](./LICENSE)
 
 ---

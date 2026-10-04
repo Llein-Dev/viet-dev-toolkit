@@ -1,6 +1,6 @@
 {
   "name": "@llein/vn-plate-format",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Format, standardize and parse Vietnam vehicle license plates according to Circular 24/2023/TT-BCA.",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",

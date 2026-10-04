@@ -1,6 +1,6 @@
 {
   "name": "@llein/keyboard-shortcut-listener",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Zero-dependency keyboard shortcut listener and React hook for Cmd+K, Ctrl+S, Escape with cross-platform Mod key and input field suppression.",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",

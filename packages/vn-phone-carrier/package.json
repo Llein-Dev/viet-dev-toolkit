@@ -1,6 +1,6 @@
 {
   "name": "@llein/vn-phone-carrier",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Detect Vietnamese mobile network operators (Viettel, Vina, Mobi, Vietnamobile, Wintel, I-Telecom), landlines, 11-to-10 digit migration, and E.164 phone formatting with React Hook useVNPhone.",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",

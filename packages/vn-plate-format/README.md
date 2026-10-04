@@ -3,9 +3,9 @@
 > Format, standardize and parse Vietnam vehicle license plates according to Circular 24/2023/TT-BCA.
 
 [![npm version](https://img.shields.io/npm/v/@llein/vn-plate-format.svg?style=flat-square)](https://www.npmjs.com/package/@llein/vn-plate-format)
-[![npm downloads](https://img.shields.io/npm/dm/@llein/vn-plate-format.svg?style=flat-square)](https://www.npmjs.com/package/@llein/vn-plate-format)
-[![bundle size](https://img.shields.io/bundlephobia/minzip/@llein/vn-plate-format?style=flat-square)](https://bundlephobia.com/package/@llein/vn-plate-format)
-[![license](https://img.shields.io/npm/l/@llein/vn-plate-format.svg?style=flat-square)](./LICENSE)
+[![Zero Dependencies](https://img.shields.io/badge/dependencies-0-success.svg?style=flat-square)](https://www.npmjs.com/package/@llein/vn-plate-format)
+[![bundle size](https://img.shields.io/badge/bundle%20size-%3C%203KB-success.svg?style=flat-square)](https://www.npmjs.com/package/@llein/vn-plate-format)
+[![license](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](./LICENSE)
 
 ---
 

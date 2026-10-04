@@ -3,6 +3,8 @@
 > Zero-dependency keyboard shortcut listener and React hook for Cmd+K, Ctrl+S, Escape with cross-platform `mod` key and automatic text input suppression.
 
 [![npm version](https://img.shields.io/npm/v/@llein/keyboard-shortcut-listener.svg?style=flat-square)](https://www.npmjs.com/package/@llein/keyboard-shortcut-listener)
+[![Zero Dependencies](https://img.shields.io/badge/dependencies-0-success.svg?style=flat-square)](https://www.npmjs.com/package/@llein/keyboard-shortcut-listener)
+[![bundle size](https://img.shields.io/badge/bundle%20size-%3C%203KB-success.svg?style=flat-square)](https://www.npmjs.com/package/@llein/keyboard-shortcut-listener)
 [![license](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](./LICENSE)
 
 ---

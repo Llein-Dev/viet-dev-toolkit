@@ -3,9 +3,9 @@
 > Enterprise-grade, zero-dependency utility to convert numbers into standardized Vietnamese currency words for invoices, banking, and contracts.
 
 [![npm version](https://img.shields.io/npm/v/@llein/vn-currency-words.svg?style=flat-square)](https://www.npmjs.com/package/@llein/vn-currency-words)
-[![npm downloads](https://img.shields.io/npm/dm/@llein/vn-currency-words.svg?style=flat-square)](https://www.npmjs.com/package/@llein/vn-currency-words)
-[![bundle size](https://img.shields.io/bundlephobia/minzip/@llein/vn-currency-words?style=flat-square)](https://bundlephobia.com/package/@llein/vn-currency-words)
-[![license](https://img.shields.io/npm/l/@llein/vn-currency-words.svg?style=flat-square)](./LICENSE)
+[![Zero Dependencies](https://img.shields.io/badge/dependencies-0-success.svg?style=flat-square)](https://www.npmjs.com/package/@llein/vn-currency-words)
+[![bundle size](https://img.shields.io/badge/bundle%20size-%3C%203KB-success.svg?style=flat-square)](https://www.npmjs.com/package/@llein/vn-currency-words)
+[![license](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](./LICENSE)
 
 ---
 

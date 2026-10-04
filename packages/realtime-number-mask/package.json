@@ -1,6 +1,6 @@
 {
   "name": "@llein/realtime-number-mask",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Zero-dependency real-time number and currency input mask with flawless cursor position preservation for HTML inputs and web forms.",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",

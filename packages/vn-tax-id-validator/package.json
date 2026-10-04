@@ -1,6 +1,6 @@
 {
   "name": "@llein/vn-tax-id-validator",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Validate and format Vietnam Tax Identification Numbers (Mã số thuế - MST 10 and 13 digits) using official Checksum Modulo-11 algorithm (Circular 105/2020/TT-BTC).",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",

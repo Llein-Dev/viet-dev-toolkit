@@ -3,9 +3,9 @@
 > Production-grade OCR / ANPR license plate text cleaner, character confusion disambiguation (`0` vs `O`, `1` vs `I`, `8` vs `B`), 2-line combiner, and whitelist fuzzy matcher.
 
 [![npm version](https://img.shields.io/npm/v/@llein/anpr-plate-cleaner.svg?style=flat-square)](https://www.npmjs.com/package/@llein/anpr-plate-cleaner)
-[![npm downloads](https://img.shields.io/npm/dm/@llein/anpr-plate-cleaner.svg?style=flat-square)](https://www.npmjs.com/package/@llein/anpr-plate-cleaner)
-[![bundle size](https://img.shields.io/bundlephobia/minzip/@llein/anpr-plate-cleaner?style=flat-square)](https://bundlephobia.com/package/@llein/anpr-plate-cleaner)
-[![license](https://img.shields.io/npm/l/@llein/anpr-plate-cleaner.svg?style=flat-square)](./LICENSE)
+[![Zero Dependencies](https://img.shields.io/badge/dependencies-0-success.svg?style=flat-square)](https://www.npmjs.com/package/@llein/anpr-plate-cleaner)
+[![bundle size](https://img.shields.io/badge/bundle%20size-%3C%203KB-success.svg?style=flat-square)](https://www.npmjs.com/package/@llein/anpr-plate-cleaner)
+[![license](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](./LICENSE)
 
 ---
 

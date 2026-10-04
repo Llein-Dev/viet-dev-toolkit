@@ -1,6 +1,6 @@
 {
   "name": "@llein/anpr-plate-cleaner",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Production-grade OCR/ANPR license plate text cleaner, character confusion disambiguation (0/O, 1/I, 8/B), 2-line combiner, and fuzzy matcher.",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",

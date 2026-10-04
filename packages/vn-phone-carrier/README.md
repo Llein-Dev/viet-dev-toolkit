@@ -3,9 +3,9 @@
 > Detect Vietnamese mobile network operators (Viettel, Vina, Mobi, Vietnamobile, Wintel, I-Telecom), 11-to-10 digit migration, and E.164 phone formatting.
 
 [![npm version](https://img.shields.io/npm/v/@llein/vn-phone-carrier.svg?style=flat-square)](https://www.npmjs.com/package/@llein/vn-phone-carrier)
-[![npm downloads](https://img.shields.io/npm/dm/@llein/vn-phone-carrier.svg?style=flat-square)](https://www.npmjs.com/package/@llein/vn-phone-carrier)
-[![bundle size](https://img.shields.io/bundlephobia/minzip/@llein/vn-phone-carrier?style=flat-square)](https://bundlephobia.com/package/@llein/vn-phone-carrier)
-[![license](https://img.shields.io/npm/l/@llein/vn-phone-carrier.svg?style=flat-square)](./LICENSE)
+[![Zero Dependencies](https://img.shields.io/badge/dependencies-0-success.svg?style=flat-square)](https://www.npmjs.com/package/@llein/vn-phone-carrier)
+[![bundle size](https://img.shields.io/badge/bundle%20size-%3C%203KB-success.svg?style=flat-square)](https://www.npmjs.com/package/@llein/vn-phone-carrier)
+[![license](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](./LICENSE)
 
 ---
 
