@@ -28,8 +28,6 @@
     "build": "tsup src/index.ts --format cjs,esm --dts --clean",
     "dev": "tsup src/index.ts --format cjs,esm --watch --dts",
     "test": "vitest run --passWithNoTests",
-    "publish": "npm publish --access public",
-    "pub": "npm publish --access public",
     "prepublishOnly": "npm run build"
   },
   "keywords": [
