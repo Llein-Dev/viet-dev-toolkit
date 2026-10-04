@@ -1,6 +1,6 @@
 {
   "name": "@llein/vn-bank-qr-gen",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Ultra-lightweight generator for VietQR (NAPAS 247) EMVCo payment payloads and quick-link QR URLs with React Hook useVietQR.",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",

@@ -3,9 +3,9 @@
 > Comprehensive, zero-dependency parser & validator for Vietnam Citizen Identity Cards (CCCD / VNeID) and Chip QR Codes according to the Vietnam Citizen Identity Law.
 
 [![npm version](https://img.shields.io/npm/v/@llein/vn-cccd-parser.svg?style=flat-square)](https://www.npmjs.com/package/@llein/vn-cccd-parser)
-[![npm downloads](https://img.shields.io/npm/dm/@llein/vn-cccd-parser.svg?style=flat-square)](https://www.npmjs.com/package/@llein/vn-cccd-parser)
-[![bundle size](https://img.shields.io/bundlephobia/minzip/@llein/vn-cccd-parser?style=flat-square)](https://bundlephobia.com/package/@llein/vn-cccd-parser)
-[![license](https://img.shields.io/npm/l/@llein/vn-cccd-parser.svg?style=flat-square)](./LICENSE)
+[![Zero Dependencies](https://img.shields.io/badge/dependencies-0-success.svg?style=flat-square)](https://www.npmjs.com/package/@llein/vn-cccd-parser)
+[![bundle size](https://img.shields.io/badge/bundle%20size-%3C%203KB-success.svg?style=flat-square)](https://www.npmjs.com/package/@llein/vn-cccd-parser)
+[![license](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](./LICENSE)
 
 ---
 

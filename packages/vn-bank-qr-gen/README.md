@@ -3,9 +3,9 @@
 > Ultra-lightweight, zero-dependency VietQR (NAPAS 247) EMVCo payment payload generator & parser with full directory of 54+ Vietnamese banks.
 
 [![npm version](https://img.shields.io/npm/v/@llein/vn-bank-qr-gen.svg?style=flat-square)](https://www.npmjs.com/package/@llein/vn-bank-qr-gen)
-[![npm downloads](https://img.shields.io/npm/dm/@llein/vn-bank-qr-gen.svg?style=flat-square)](https://www.npmjs.com/package/@llein/vn-bank-qr-gen)
-[![bundle size](https://img.shields.io/bundlephobia/minzip/@llein/vn-bank-qr-gen?style=flat-square)](https://bundlephobia.com/package/@llein/vn-bank-qr-gen)
-[![license](https://img.shields.io/npm/l/@llein/vn-bank-qr-gen.svg?style=flat-square)](./LICENSE)
+[![Zero Dependencies](https://img.shields.io/badge/dependencies-0-success.svg?style=flat-square)](https://www.npmjs.com/package/@llein/vn-bank-qr-gen)
+[![bundle size](https://img.shields.io/badge/bundle%20size-%3C%203KB-success.svg?style=flat-square)](https://www.npmjs.com/package/@llein/vn-bank-qr-gen)
+[![license](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](./LICENSE)
 
 ---
 

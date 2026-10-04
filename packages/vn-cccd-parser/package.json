@@ -1,6 +1,6 @@
 {
   "name": "@llein/vn-cccd-parser",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Parse 12-digit Vietnam National Citizen Identity (CCCD/VNeID) number into birth year, century, gender, and birth province.",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
