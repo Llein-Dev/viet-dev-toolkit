@@ -1,0 +1,69 @@
+{
+  "name": "@llein/api-error-sanitizer",
+  "version": "1.0.0",
+  "description": "Ultra-lightweight, zero-dependency API error normalizer and sanitizer for Axios, Fetch, NestJS, Laravel, and Cloudflare HTML crashes into clean UI-ready toast objects.",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./react": {
+      "types": "./dist/react.d.ts",
+      "import": "./dist/react.mjs",
+      "require": "./dist/react.js"
+    }
+  },
+  "peerDependencies": {
+    "react": ">=16.8.0"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Llein-Dev/viet-dev-toolkit.git",
+    "directory": "packages/api-error-sanitizer"
+  },
+  "homepage": "https://github.com/Llein-Dev/viet-dev-toolkit#readme",
+  "bugs": {
+    "url": "https://github.com/Llein-Dev/viet-dev-toolkit/issues"
+  },
+  "scripts": {
+    "build": "tsup src/index.ts src/react.ts --format cjs,esm --dts --clean --external react",
+    "dev": "tsup src/index.ts src/react.ts --format cjs,esm --watch --dts --external react",
+    "test": "vitest run --passWithNoTests",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "utility",
+    "zero-dependency",
+    "typescript",
+    "api-error",
+    "axios-error",
+    "fetch-error",
+    "error-sanitizer",
+    "error-normalizer",
+    "toast-error",
+    "laravel-error",
+    "nestjs-error",
+    "cloudflare-error",
+    "react-hook"
+  ],
+  "author": "llein",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "tsup": "^8.3.5",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  }
+}
